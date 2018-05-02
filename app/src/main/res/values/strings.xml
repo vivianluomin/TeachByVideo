@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TeacherByVideo</string>
+    <string name="teach_fall">教学大厅</string>
+    <string name="mime">我的信息</string>
+    <string name="course">我的课程</string>
+    <string name="history">我的历史</string>
+    <string name="marks">我的积分</string>
+</resources>

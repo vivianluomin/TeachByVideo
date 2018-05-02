@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FF5722</color>
+    <color name="colorPrimaryDark">#E64A19</color>
+    <color name="colorAccent">#FF9800</color>
+    <color name="lightPrimaryColor">#ffccbc</color>
+    <color name="textColor">#212121</color>
+    <color name="secondTextColor">#757575</color>
+    <color name="divideColor">#bdbdbd</color>
+    <color name="mainColor">#ff5722</color>
+    <color name="bg_color">#fafafa</color>
+    <color name="bg_gray_color">#f2f2f2</color>
+    <color name="divide_secondColor">#eee</color>
+</resources>

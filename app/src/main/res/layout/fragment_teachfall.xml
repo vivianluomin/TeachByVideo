@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_color"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:paddingTop="24dp"
+        android:textColor="#fff"
+        android:background="@color/mainColor"
+        android:textSize="16sp"
+        android:text="@string/teach_fall"
+        android:gravity="center"
+        />
+
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+
+
+    </GridLayout>
+
+
+
+</LinearLayout>
