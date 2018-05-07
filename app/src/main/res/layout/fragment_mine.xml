@@ -7,29 +7,45 @@
     android:background="@color/bg_color"
     >
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="74dp"
-        android:paddingTop="24dp"
-        android:background="@color/mainColor"
-        android:textColor="#fff"
-        android:textSize="16sp"
-        android:text="@string/mime"
-        android:gravity="center"
-        />
+        android:layout_height="250dp"
+        >
+
+        <com.example.asus1.teacherbyvideo.views.MineBG
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="@color/bg_gray_color"
-        />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/iv_usericon"
+            android:src="@mipmap/ic_usericon"
+            android:layout_centerInParent="true"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            android:text="小薇子"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:layout_below="@id/iv_usericon"
+            />
+
+    </RelativeLayout>
+
+
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_mineinfo"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="@color/textColor"
         android:text="@string/mime"
         android:drawableLeft="@mipmap/ic_mineinfo"
@@ -40,16 +56,14 @@
         />
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divideColor"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="10dp"
+        android:layout_height="10dp"
+        android:background="@color/bg_gray_color"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_course"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="@color/textColor"
         android:text="@string/course"
         android:drawableLeft="@mipmap/ic_course"
@@ -60,16 +74,14 @@
         />
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divideColor"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="10dp"
+        android:layout_height="10dp"
+        android:background="@color/bg_gray_color"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_history"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="@color/textColor"
         android:text="@string/history"
         android:drawableLeft="@mipmap/ic_history"
@@ -80,29 +92,24 @@
         />
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divideColor"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="10dp"
+        android:layout_height="10dp"
+        android:background="@color/bg_gray_color"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_marks"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="@color/textColor"
         android:text="@string/marks"
         android:drawableLeft="@mipmap/ic_marks"
         android:drawablePadding="5dp"
         android:padding="10dp"
         android:drawableRight="@mipmap/ic_more"
-        android:gravity="center_vertical"
-        />
+        android:gravity="center_vertical"/>
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divideColor"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="10dp"
+        android:layout_height="10dp"
+        android:background="@color/bg_gray_color"
         />
 </LinearLayout>
