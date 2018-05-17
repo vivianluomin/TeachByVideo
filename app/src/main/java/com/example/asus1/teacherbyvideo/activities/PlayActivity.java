@@ -1,42 +1,58 @@
 package com.example.asus1.teacherbyvideo.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.views.VideoRecordView;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayActivity extends  BaseActivity implements View.OnClickListener{
+public class PlayActivity extends  BaseActivity implements View.OnClickListener , SurfaceHolder.Callback{
 
     private ImageView mPlayImage;
-    private TextureView mPlayView;
+    private VideoRecordView mPlayView;
     private MediaRecorder mRecorder;
     private File mViedoFile;
     private String[] permissions;
     private List<String> mPer;
-    private Camera mCamers;
-    private boolean isRecording = false;
+
+    private Camera mCamera;
+
+    private Handler mHandler;
+    private CameraManager mCameraManager;
+    private CameraDevice mCameraDevice;
+    private CaptureRequest.Builder mPreviewBuilder;
+
+    private boolean isRecording = true;
+
+    private int cameraId;
+    private boolean cameraFront = false;
 
     private static final String TAG = "PlayActivity";
 
@@ -46,22 +62,21 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener{
         setContentView(R.layout.activity_play);
         getWindow().setFormat(PixelFormat.TRANSPARENT);
         init();
-        setPermission();
+
 
     }
 
     private void init(){
         mPlayImage = (ImageView)findViewById(R.id.ivbtn_play);
-        mPlayView = (TextureView) findViewById(R.id.surfaceview);
+        mPlayView = (VideoRecordView) findViewById(R.id.surfaceview);
+        mPlayView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mPlayView.getHolder().addCallback(this);
         mPlayImage.setOnClickListener(this);
-        
-        CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-//        mPlayView.getHolder().setFixedSize(profile.videoFrameWidth,profile.videoFrameHeight);
-//        mPlayView.getHolder().setKeepScreenOn(true);
-//        mPlayView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
 
     }
+
+
+
 
     private void setPermission(){
         permissions = new String[3];
@@ -69,6 +84,7 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener{
         permissions[0] = Manifest.permission.RECORD_AUDIO;
         permissions[1] = Manifest.permission.CAMERA;
         permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 
         for(int i = 0;i<permissions.length;i++){
             if(ContextCompat.checkSelfPermission
@@ -108,26 +124,94 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener{
 
     }
 
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        setPermission();
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        if(mCamera!=null){
+           // mCamera.unlock();
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    private int findFrontFacingCamera() {
+
+        // Search for the front facing camera
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                cameraId = i;
+                cameraFront = true;
+                break;
+            }
+        }
+        return cameraId;
+    }
+
     private void setRecorder(){
+
+        mRecorder = new MediaRecorder();
+
         try {
+
+            if(mCamera != null){
+               // mCamera.unlock();
+                mCamera.release();
+                mCamera = null;
+            }
+            mCamera = Camera.open(findFrontFacingCamera());
+            mCamera.setDisplayOrientation(90);
+            mCamera.unlock();
+            mRecorder.setCamera(mCamera);
+
 
             mViedoFile = new File(
                     Environment.getExternalStorageDirectory()
-                            .getCanonicalFile()+"/testvideo.3gp");
-            mRecorder = new MediaRecorder();
+                    ,System.currentTimeMillis()+".mp4");
+
             mRecorder.reset();
+            mRecorder.setOrientationHint(90);
+
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-            CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-            mRecorder.setVideoSize(profile.videoFrameWidth, profile.videoFrameHeight);
-            mRecorder.setVideoFrameRate(20);
+
             mRecorder.setOutputFile(mViedoFile.getAbsolutePath());
-            mRecorder.setPreviewDisplay(mPlayView.);
+            mRecorder.setPreviewDisplay(mPlayView.getHolder().getSurface());
+
             mRecorder.prepare();
-           // mRecorder.start();
+
+            mRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
+                @Override
+                public void onError(MediaRecorder mr, int what, int extra) {
+                    mRecorder.stop();
+                    mRecorder.release();
+                    mCamera.stopPreview();
+                    mCamera.release();
+                    mCamera = null;
+                    mRecorder = null;
+                    Log.e(TAG, "onError: "+extra);
+                }
+            });
+
+
+            mRecorder.start();
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -135,16 +219,38 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        if(isRecording){
-            mRecorder.pause();
-            mPlayImage.setImageResource(R.mipmap.ic_recode);
-            isRecording = false;
-            Log.d(TAG, "onClick: pause");
-        }else {
-           mRecorder.start();
-           mPlayImage.setImageResource(R.mipmap.ic_pause);
-           isRecording = true;
-            Log.d(TAG, "onClick: start");
-        }
+//        if(isRecording){
+//            mRecorder.stop();
+//            mRecorder.release();
+//            mRecorder = null;
+//            mPlayImage.setImageResource(R.mipmap.ic_pause);
+//            isRecording = false;
+//            Log.d(TAG, "onClick: pause");
+//        }else {
+//            setRecorder();
+//           //mRecorder.start();
+//           mPlayImage.setImageResource(R.mipmap.ic_recode);
+//           isRecording = true;
+//            Log.d(TAG, "onClick: start");
+//        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+
+
+    @Override
+    protected void onDestroy() {
+        mCamera.stopPreview();
+        mCamera.release();
+        mCamera = null;
+        mRecorder.stop();
+        mRecorder.release();
+
+        mRecorder = null;
+        super.onDestroy();
     }
 }
