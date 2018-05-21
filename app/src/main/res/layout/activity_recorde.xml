@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.asus1.teacherbyvideo.activities.RecordeActivity">
+
+
+    <com.example.asus1.teacherbyvideo.views.VideoRecordView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/surfaceview"
+        />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/iv_back"
+        android:src="@mipmap/ic_back"
+        android:scaleType="center"
+        android:layout_marginTop="24dp"
+        />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/iv_camera"
+        android:src="@mipmap/ic_camera"
+        android:scaleType="center"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="right"
+        />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/ivbtn_play"
+        android:src="@mipmap/ic_pause"
+        android:layout_gravity="bottom|center"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="20dp"
+        />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/iv_preview"
+        android:src="@mipmap/ic_preview"
+        android:layout_gravity="bottom|right"
+        android:scaleType="center"
+        android:layout_marginBottom="20dp"
+        />
+
+
+
+</FrameLayout>

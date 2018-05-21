@@ -1,20 +1,13 @@
 package com.example.asus1.teacherbyvideo.activities;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureRequest;
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -33,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayActivity extends  BaseActivity implements View.OnClickListener , SurfaceHolder.Callback{
+public class RecordeActivity extends  BaseActivity implements View.OnClickListener , SurfaceHolder.Callback{
 
     private ImageView mPlayImage;
     private VideoRecordView mPlayView;
@@ -42,21 +35,25 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
     private String[] permissions;
     private List<String> mPer;
 
+    private ImageView mPreview;
+    private ImageView mBack;
+    private ImageView mChangeCamera;
+
     private Camera mCamera;
 
     private boolean isRecording = false;
 
     private int cameraId;
-    private boolean cameraFront = false;
 
     private boolean isFrist = true;
+    private String mFilePath = null;
 
     private static final String TAG = "PlayActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_play);
+        setContentView(R.layout.activity_recorde);
         getWindow().setFormat(PixelFormat.TRANSPARENT);
         init();
 
@@ -69,6 +66,19 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
         mPlayView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mPlayView.getHolder().addCallback(this);
         mPlayImage.setOnClickListener(this);
+        mPreview = (ImageView)findViewById(R.id.iv_preview);
+        mPreview.setOnClickListener(this);
+        mBack = (ImageView)findViewById(R.id.iv_back);
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        mChangeCamera = (ImageView)findViewById(R.id.iv_camera);
+        mChangeCamera.setOnClickListener(this);
+
 
     }
 
@@ -153,7 +163,6 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
             Camera.getCameraInfo(i, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 cameraId = i;
-                cameraFront = true;
                 break;
             }
         }
@@ -177,10 +186,11 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
             }
 
 
-            mViedoFile = new File(
-                    Environment.getExternalStorageDirectory()
-                    ,System.currentTimeMillis()+".mp4");
 
+            mViedoFile = new File(Environment.getExternalStorageDirectory(),
+                    System.currentTimeMillis()+".mp4");
+            mFilePath = mViedoFile.getPath();
+            Log.d(TAG, "setRecorder: "+mFilePath);
             mRecorder.reset();
             mRecorder.setOrientationHint(90);
 
@@ -215,33 +225,79 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        if(isRecording){
-            mRecorder.pause();
+
+        switch (v.getId()){
+            case R.id.ivbtn_play:
+                if(isRecording){
+                    mRecorder.pause();
 //            mRecorder.release();
 //            mRecorder = null;
-            mPlayImage.setImageResource(R.mipmap.ic_pause);
-            isRecording = false;
-            Log.d(TAG, "onClick: stop");
-        }else {
-            if(isFrist){
-                mRecorder.start();
-                isFrist = false;
-            }else {
+                    mPlayImage.setImageResource(R.mipmap.ic_pause);
+                    isRecording = false;
+                    Log.d(TAG, "onClick: stop");
+                }else {
+                    if(isFrist){
+                        mRecorder.start();
+                        isFrist = false;
+                    }else {
 //                mCamera.stopPreview();
 //                mCamera.release();
 //                mCamera = null;
-                //setRecorder();
-                mRecorder.resume();
-            }
+                        //setRecorder();
+                        mRecorder.resume();
+                    }
 
-           mPlayImage.setImageResource(R.mipmap.ic_recode);
-           isRecording = true;
-            Log.d(TAG, "onClick: start");
+                    mPlayImage.setImageResource(R.mipmap.ic_recode);
+                    isRecording = true;
+                    Log.d(TAG, "onClick: start");
+                }
+                break;
+
+            case R.id.iv_camera:
+                break;
+            case R.id.iv_preview:
+                mRecorder.stop();
+                mCamera.stopPreview();
+                Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
+                intent.putExtra("video",mFilePath);
+                startActivity(intent);
+
+                break;
         }
+
+    }
+
+    @Override
+    protected void onResume() {
+        if(mCamera!=null){
+            // mCamera.unlock();
+            mCamera.startPreview();
+            mCamera.unlock();
+            // mCamera.release();
+            //mCamera = null;
+        }
+        if(mRecorder !=null){
+            mRecorder.resume();
+            // mRecorder.release();
+            // mRecorder = null;
+        }
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
+        if(mCamera!=null){
+            // mCamera.unlock();
+            mCamera.stopPreview();
+            mCamera.unlock();
+           // mCamera.release();
+            //mCamera = null;
+        }
+        if(mRecorder !=null){
+            mRecorder.pause();
+           // mRecorder.release();
+           // mRecorder = null;
+        }
         super.onPause();
     }
 
@@ -249,11 +305,18 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
 
     @Override
     protected void onDestroy() {
+        if(mCamera!=null){
+            // mCamera.unlock();
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
         if(mRecorder !=null){
             mRecorder.stop();
             mRecorder.release();
             mRecorder = null;
         }
+
         super.onDestroy();
     }
 }

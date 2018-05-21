@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.example.asus1.teacherbyvideo.Holders.VideoHolder;
 import com.example.asus1.teacherbyvideo.R;
-import com.example.asus1.teacherbyvideo.activities.PlayActivity;
+import com.example.asus1.teacherbyvideo.activities.RecordeActivity;
 
 /**
  * Created by asus1 on 2018/5/7.
@@ -29,7 +29,7 @@ public class TeachFallAdapter extends RecyclerView.Adapter<VideoHolder> {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startActivity(new Intent(mContext, PlayActivity.class));
+                mContext.startActivity(new Intent(mContext, RecordeActivity.class));
             }
         });
         return new VideoHolder(view);

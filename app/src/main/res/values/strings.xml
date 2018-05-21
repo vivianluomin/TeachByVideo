@@ -5,4 +5,7 @@
     <string name="course">我的课程</string>
     <string name="history">我的历史</string>
     <string name="marks">我的积分</string>
+    <string name="preview">预览</string>
+    <string name="save_net">保存在服务器</string>
+    <string name="save_local">保存在本地</string>
 </resources>
