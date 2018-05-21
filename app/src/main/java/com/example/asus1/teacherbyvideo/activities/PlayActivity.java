@@ -44,15 +44,12 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
 
     private Camera mCamera;
 
-    private Handler mHandler;
-    private CameraManager mCameraManager;
-    private CameraDevice mCameraDevice;
-    private CaptureRequest.Builder mPreviewBuilder;
-
-    private boolean isRecording = true;
+    private boolean isRecording = false;
 
     private int cameraId;
     private boolean cameraFront = false;
+
+    private boolean isFrist = true;
 
     private static final String TAG = "PlayActivity";
 
@@ -144,6 +141,7 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
             mCamera.release();
             mCamera = null;
         }
+
     }
 
     private int findFrontFacingCamera() {
@@ -163,20 +161,20 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
     }
 
     private void setRecorder(){
-
-        mRecorder = new MediaRecorder();
-
         try {
 
-            if(mCamera != null){
-               // mCamera.unlock();
-                mCamera.release();
-                mCamera = null;
+            if(mCamera == null){
+                mCamera = Camera.open(findFrontFacingCamera());
+                mCamera.setDisplayOrientation(90);
+                mCamera.setPreviewDisplay(mPlayView.getHolder());
+                mCamera.startPreview();
+                mCamera.unlock();
+
             }
-            mCamera = Camera.open(findFrontFacingCamera());
-            mCamera.setDisplayOrientation(90);
-            mCamera.unlock();
-            mRecorder.setCamera(mCamera);
+            if(mRecorder== null){
+                mRecorder = new MediaRecorder();
+                mRecorder.setCamera(mCamera);
+            }
 
 
             mViedoFile = new File(
@@ -210,8 +208,6 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
                 }
             });
 
-
-            mRecorder.start();
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -219,20 +215,29 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-//        if(isRecording){
-//            mRecorder.stop();
+        if(isRecording){
+            mRecorder.pause();
 //            mRecorder.release();
 //            mRecorder = null;
-//            mPlayImage.setImageResource(R.mipmap.ic_pause);
-//            isRecording = false;
-//            Log.d(TAG, "onClick: pause");
-//        }else {
-//            setRecorder();
-//           //mRecorder.start();
-//           mPlayImage.setImageResource(R.mipmap.ic_recode);
-//           isRecording = true;
-//            Log.d(TAG, "onClick: start");
-//        }
+            mPlayImage.setImageResource(R.mipmap.ic_pause);
+            isRecording = false;
+            Log.d(TAG, "onClick: stop");
+        }else {
+            if(isFrist){
+                mRecorder.start();
+                isFrist = false;
+            }else {
+//                mCamera.stopPreview();
+//                mCamera.release();
+//                mCamera = null;
+                //setRecorder();
+                mRecorder.resume();
+            }
+
+           mPlayImage.setImageResource(R.mipmap.ic_recode);
+           isRecording = true;
+            Log.d(TAG, "onClick: start");
+        }
     }
 
     @Override
@@ -244,13 +249,11 @@ public class PlayActivity extends  BaseActivity implements View.OnClickListener 
 
     @Override
     protected void onDestroy() {
-        mCamera.stopPreview();
-        mCamera.release();
-        mCamera = null;
-        mRecorder.stop();
-        mRecorder.release();
-
-        mRecorder = null;
+        if(mRecorder !=null){
+            mRecorder.stop();
+            mRecorder.release();
+            mRecorder = null;
+        }
         super.onDestroy();
     }
 }

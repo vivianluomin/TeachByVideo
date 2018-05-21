@@ -18,7 +18,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/ivbtn_play"
-        android:src="@mipmap/ic_recode"
+        android:src="@mipmap/ic_pause"
         android:layout_gravity="bottom|center"
         android:scaleType="centerCrop"
         android:layout_marginBottom="20dp"
