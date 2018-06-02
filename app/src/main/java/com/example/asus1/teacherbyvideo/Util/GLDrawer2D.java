@@ -1,0 +1,155 @@
+package com.example.asus1.teacherbyvideo.Util;
+
+import android.opengl.GLES11Ext;
+import android.opengl.GLES20;
+import android.opengl.Matrix;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+public class GLDrawer2D {
+
+    private static final String vss
+            = "uniform mat4 uMVPMatrix;\n"
+            + "uniform mat4 uTexMatrix;\n"
+            + "attribute highp vec4 aPosition;\n"
+            + "attribute highp vec4 aTextureCoord;\n"
+            + "varying highp vec2 vTextureCoord;\n"
+            + "\n"
+            + "void main() {\n"
+            + "	gl_Position = uMVPMatrix * aPosition;\n"
+            + "	vTextureCoord = (uTexMatrix * aTextureCoord).xy;\n"
+            + "}\n";
+
+    private static final String fss
+            = "#extension GL_OES_EGL_image_external : require\n"
+            + "precision mediump float;\n"
+            + "uniform samplerExternalOES sTexture;\n"
+            + "varying highp vec2 vTextureCoord;\n"
+            + "void main() {\n"
+            + "  gl_FragColor = texture2D(sTexture, vTextureCoord);\n"
+            + "}";
+
+
+    private static final float[] VERTICES = {1.0f,1.0f,-1.0f,1.0f,1.0f,-1.0f,-1.0f,-1.0f};
+    private static final float[]  TEXCOORD = {1.0f,1.0f,0.0f,1.0f,1.0f,0.0f,0.0f,0.0f};
+
+    private final FloatBuffer pVertes;
+    private final FloatBuffer pTexCoord;
+
+    private int hProgram;
+    int maPositionLoc;
+    int maTextureCoordLoc;
+    int muMVPMatrixLoc;
+    int muTexMatrixLoc;
+
+    private final float[] mMvpMatrix = new float[16];
+
+    private static final int FLOAT_SZ = Float.SIZE/8;
+    private static final int VERTEX_NUM = 4;
+    private static final int VERTEX_SZ = VERTEX_NUM*2;
+
+    public GLDrawer2D(){
+        pVertes = ByteBuffer.allocateDirect(VERTEX_SZ*FLOAT_SZ).
+                order(ByteOrder.nativeOrder()).asFloatBuffer();
+        pVertes.put(VERTICES);
+        pVertes.position(0);
+
+        pTexCoord = ByteBuffer.allocateDirect(VERTEX_SZ *FLOAT_SZ)
+                .order(ByteOrder.nativeOrder()).asFloatBuffer();
+        pTexCoord.put(TEXCOORD);
+        pTexCoord.position(0);
+
+        hProgram = loadShader(vss,fss);
+        GLES20.glUseProgram(hProgram);
+
+        maPositionLoc = GLES20.glGetAttribLocation(hProgram,"aPosition");
+        maTextureCoordLoc = GLES20.glGetAttribLocation(hProgram,"aTextureCoord");
+        muMVPMatrixLoc = GLES20.glGetAttribLocation(hProgram,"uMVPMatrix");
+        muTexMatrixLoc = GLES20.glGetAttribLocation(hProgram,"uTexMatrix");
+
+        Matrix.setIdentityM(mMvpMatrix,0);
+        GLES20.glUniformMatrix4fv(muMVPMatrixLoc,1,false,mMvpMatrix,0);
+        GLES20.glUniformMatrix4fv(muTexMatrixLoc,1,false,mMvpMatrix,0);
+        GLES20.glVertexAttribPointer(maPositionLoc,2,
+                GLES20.GL_FLOAT,false,VERTEX_SZ,pVertes);
+        GLES20.glVertexAttribPointer(maTextureCoordLoc,2
+                ,GLES20.GL_FLOAT,false,VERTEX_SZ,pTexCoord);
+        GLES20.glEnableVertexAttribArray(maPositionLoc);
+        GLES20.glEnableVertexAttribArray(maTextureCoordLoc);
+
+
+    }
+
+    public void release(){
+        if(hProgram>0){
+            GLES20.glDeleteProgram(hProgram);
+            hProgram = -1;
+        }
+    }
+
+    public void draw(final int tex_id,float[] tex_matrix){
+        GLES20.glUseProgram(hProgram);
+        if(tex_matrix!=null){
+            GLES20.glUniformMatrix4fv(muTexMatrixLoc,1,false,tex_matrix,0);
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE);
+            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,tex_id);
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,VERTEX_NUM);
+            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,0);
+            GLES20.glUseProgram(hProgram);
+        }
+    }
+
+    public void setMatrix(float[] matrix,int offset){
+        if(matrix!=null && (matrix.length>=offset+16)){
+
+            System.arraycopy(matrix, offset, mMvpMatrix, 0, 16);
+        } else {
+            Matrix.setIdentityM(mMvpMatrix, 0);
+        }
+    }
+
+    public static int initTex(){
+         int[] tex = new int[1];
+         GLES20.glGenTextures(1,tex,0);
+         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,tex[0]);
+         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                            GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GLES20.GL_TEXTURE_WRAP_T,GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GLES20.GL_TEXTURE_WRAP_S,GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GLES20.GL_TEXTURE_MIN_FILTER,GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                GLES20.GL_TEXTURE_MAG_FILTER,GLES20.GL_NEAREST);
+
+        return tex[0];
+    }
+
+    public static void deleteTex(int hTex){
+        int[] tex = new int[]{hTex};
+        GLES20.glDeleteTextures(1,tex,0);
+    }
+
+    public static int loadShader(final  String vss,final String fss){
+        int vs = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
+        GLES20.glShaderSource(vs,vss);
+        GLES20.glCompileShader(vs);
+
+        int fs = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);
+        GLES20.glShaderSource(fs,fss);
+        GLES20.glCompileShader(fs);
+
+        int program = GLES20.glCreateProgram();
+        GLES20.glAttachShader(program,vs);
+        GLES20.glAttachShader(program,fs);
+        GLES20.glLinkProgram(program);
+
+        return program;
+
+    }
+
+
+}

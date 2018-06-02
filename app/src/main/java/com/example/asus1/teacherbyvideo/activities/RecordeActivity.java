@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.views.CameraGLView;
 import com.example.asus1.teacherbyvideo.views.VideoRecordView;
 
 import java.io.File;
@@ -26,12 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecordeActivity extends  BaseActivity implements View.OnClickListener , SurfaceHolder.Callback{
+public class RecordeActivity extends  BaseActivity implements View.OnClickListener{
 
     private ImageView mPlayImage;
-    private VideoRecordView mPlayView;
-    private MediaRecorder mRecorder;
-    private File mViedoFile;
+    private CameraGLView mPlayView;
     private String[] permissions;
     private List<String> mPer;
 
@@ -39,14 +38,6 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     private ImageView mBack;
     private ImageView mChangeCamera;
 
-    private Camera mCamera;
-
-    private boolean isRecording = false;
-
-    private int cameraId;
-
-    private boolean isFrist = true;
-    private String mFilePath = null;
 
     private static final String TAG = "PlayActivity";
 
@@ -62,9 +53,8 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
     private void init(){
         mPlayImage = (ImageView)findViewById(R.id.ivbtn_play);
-        mPlayView = (VideoRecordView) findViewById(R.id.surfaceview);
-        mPlayView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        mPlayView.getHolder().addCallback(this);
+        //mPlayImage.setVideoSize(1280, 720);
+        mPlayView = (CameraGLView) findViewById(R.id.surfaceview);
         mPlayImage.setOnClickListener(this);
         mPreview = (ImageView)findViewById(R.id.iv_preview);
         mPreview.setOnClickListener(this);
@@ -78,6 +68,8 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
         mChangeCamera = (ImageView)findViewById(R.id.iv_camera);
         mChangeCamera.setOnClickListener(this);
+
+        //setPermission();
 
 
     }
@@ -132,95 +124,9 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     }
 
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-
-        setPermission();
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        if(mCamera!=null){
-           // mCamera.unlock();
-            mCamera.stopPreview();
-            mCamera.release();
-            mCamera = null;
-        }
-
-    }
-
-    private int findFrontFacingCamera() {
-
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
 
     private void setRecorder(){
-        try {
-
-            if(mCamera == null){
-                mCamera = Camera.open(findFrontFacingCamera());
-                mCamera.setDisplayOrientation(90);
-                mCamera.setPreviewDisplay(mPlayView.getHolder());
-                mCamera.startPreview();
-                mCamera.unlock();
-
-            }
-            if(mRecorder== null){
-                mRecorder = new MediaRecorder();
-                mRecorder.setCamera(mCamera);
-            }
-
-
-
-            mViedoFile = new File(Environment.getExternalStorageDirectory(),
-                    System.currentTimeMillis()+".mp4");
-            mFilePath = mViedoFile.getPath();
-            Log.d(TAG, "setRecorder: "+mFilePath);
-            mRecorder.reset();
-            mRecorder.setOrientationHint(90);
-
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-
-            mRecorder.setOutputFile(mViedoFile.getAbsolutePath());
-            mRecorder.setPreviewDisplay(mPlayView.getHolder().getSurface());
-
-            mRecorder.prepare();
-
-            mRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
-                @Override
-                public void onError(MediaRecorder mr, int what, int extra) {
-                    mRecorder.stop();
-                    mRecorder.release();
-                    mCamera.stopPreview();
-                    mCamera.release();
-                    mCamera = null;
-                    mRecorder = null;
-                    Log.e(TAG, "onError: "+extra);
-                }
-            });
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+      // mPlayView.onResume();
     }
 
     @Override
@@ -228,39 +134,16 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
         switch (v.getId()){
             case R.id.ivbtn_play:
-                if(isRecording){
-                    mRecorder.pause();
-//            mRecorder.release();
-//            mRecorder = null;
-                    mPlayImage.setImageResource(R.mipmap.ic_pause);
-                    isRecording = false;
-                    Log.d(TAG, "onClick: stop");
-                }else {
-                    if(isFrist){
-                        mRecorder.start();
-                        isFrist = false;
-                    }else {
-//                mCamera.stopPreview();
-//                mCamera.release();
-//                mCamera = null;
-                        //setRecorder();
-                        mRecorder.resume();
-                    }
 
-                    mPlayImage.setImageResource(R.mipmap.ic_recode);
-                    isRecording = true;
-                    Log.d(TAG, "onClick: start");
-                }
                 break;
 
             case R.id.iv_camera:
                 break;
             case R.id.iv_preview:
-                mRecorder.stop();
-                mCamera.stopPreview();
-                Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
-                intent.putExtra("video",mFilePath);
-                startActivity(intent);
+
+//                Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
+//                intent.putExtra("video",mFilePath);
+//                startActivity(intent);
 
                 break;
         }
@@ -269,53 +152,23 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
     @Override
     protected void onResume() {
-        if(mCamera!=null){
-            // mCamera.unlock();
-            mCamera.startPreview();
-            mCamera.unlock();
-            // mCamera.release();
-            //mCamera = null;
-        }
-        if(mRecorder !=null){
-            mRecorder.resume();
-            // mRecorder.release();
-            // mRecorder = null;
-        }
+
         super.onResume();
+        mPlayView.onResume();
     }
 
     @Override
     protected void onPause() {
-        if(mCamera!=null){
-            // mCamera.unlock();
-            mCamera.stopPreview();
-            mCamera.unlock();
-           // mCamera.release();
-            //mCamera = null;
-        }
-        if(mRecorder !=null){
-            mRecorder.pause();
-           // mRecorder.release();
-           // mRecorder = null;
-        }
+       // stopRecording();
+        mPlayView.onPause();
         super.onPause();
     }
 
 
 
+
     @Override
     protected void onDestroy() {
-        if(mCamera!=null){
-            // mCamera.unlock();
-            mCamera.stopPreview();
-            mCamera.release();
-            mCamera = null;
-        }
-        if(mRecorder !=null){
-            mRecorder.stop();
-            mRecorder.release();
-            mRecorder = null;
-        }
 
         super.onDestroy();
     }
