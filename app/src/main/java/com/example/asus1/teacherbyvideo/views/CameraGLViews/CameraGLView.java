@@ -1,4 +1,4 @@
-package com.example.asus1.teacherbyvideo.views;
+package com.example.asus1.teacherbyvideo.views.CameraGLViews;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -36,8 +36,8 @@ public class CameraGLView extends GLSurfaceView {
     private static final int SCALE_KEEP_ASPECT_VIEWPORT = 1;
 
     private final CameraSurfaceRenderer mRenderer;
-    private boolean mHasSurface;
-    private CmaeraHandler mCameraHandler = null;
+    public boolean mHasSurface;
+    private CameraHandler mCameraHandler = null;
     private int mVideoWidth, mVideoHeight;
     private int mRotation;
     private int mScaleMode = SCALE_STRETCH_FIT;
@@ -111,7 +111,7 @@ public class CameraGLView extends GLSurfaceView {
         super.surfaceDestroyed(holder);
     }
 
-    private synchronized void startPreview(final int width, final int height) {
+    public synchronized void startPreview(final int width, final int height) {
         Log.d(TAG, "startPreview: ");
         if (mCameraHandler == null) {
             final CameraThread thread = new CameraThread(this);
@@ -122,95 +122,12 @@ public class CameraGLView extends GLSurfaceView {
     }
 
 
-
-    private static final class CameraSurfaceRenderer implements GLSurfaceView.Renderer,
-            SurfaceTexture.OnFrameAvailableListener{
-
-        private CameraGLView mParent;
-        private SurfaceTexture mSTexture;
-        private int hTex;
-        private GLDrawer2D mDrawer;
-        private final float[] mStMatrix = new float[16];
-        private final float[] mMvpMatrix = new float[16];
-
-        public CameraSurfaceRenderer(CameraGLView parent) {
-            mParent = parent;
-            Matrix.setIdentityM(mMvpMatrix,0);
-
-        }
-
-        @Override
-        public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-           // Log.d(TAG, "onFrameAvailable: ");
-            requestUpdateTex = true;
-
-        }
-
-        @Override
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            Log.d(TAG, "onSurfaceCreated: ");
-            hTex = GLDrawer2D.initTex();
-            mSTexture = new SurfaceTexture(hTex);
-            mSTexture.setOnFrameAvailableListener(this);
-
-            GLES20.glClearColor(1.0f,1.0f,0.0f,1.0f);
-            if (mParent != null) {
-                mParent.mHasSurface = true;
-            }
-            mDrawer = new GLDrawer2D();
-            mDrawer.setMatrix(mMvpMatrix,0);
-        }
-
-        @Override
-        public void onSurfaceChanged(GL10 gl, int width, int height) {
-            Log.d(TAG, "onSurfaceChanged: ");
-            if ((width == 0) || (height == 0)) return;
-                GLES20.glViewport(0,0,width,height);
-            if (mParent != null) {
-                mParent.startPreview(width, height);
-            }
-
-        }
-
-        public void onSurfaceDestoryed(){
-            if(mDrawer!=null){
-                mDrawer.release();
-                mDrawer = null;
-            }
-
-            if(mSTexture!=null){
-                mSTexture.release();
-                mSTexture = null;
-            }
-
-            GLDrawer2D.deleteTex(hTex);
-        }
-
-        private volatile boolean requestUpdateTex = false;
-        private boolean flip = true;
-
-        @Override
-        public void onDrawFrame(GL10 gl) {
-            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-
-            if(requestUpdateTex){
-                requestUpdateTex = false;
-                mSTexture.updateTexImage();
-                mSTexture.getTransformMatrix(mStMatrix);
-            }
-
-            //Log.d(TAG, "onDrawFrame: "+mStMatrix.length);
-
-            mDrawer.draw(hTex,mStMatrix);
-        }
-    }
-
-    private static final class CmaeraHandler extends Handler{
+    private static final class CameraHandler extends Handler{
         private static final int MSG_PREVIEW_START = 1;
         private static final int MSG_PREVIEW_STOP = 2;
         private CameraThread mThread;
 
-        public CmaeraHandler(CameraThread thread){
+        public CameraHandler(CameraThread thread){
             mThread = thread;
         }
 
@@ -253,7 +170,7 @@ public class CameraGLView extends GLSurfaceView {
     private static final class CameraThread extends Thread{
         private final Object mReadyFence = new Object();
         private final CameraGLView mParent;
-        private CmaeraHandler mHandler;
+        private CameraHandler mHandler;
         private volatile boolean mIsRunning = false;
         private Camera mCamers;
         private boolean mIsFrontFace;
@@ -264,7 +181,7 @@ public class CameraGLView extends GLSurfaceView {
 
         }
 
-        public CmaeraHandler getHandler(){
+        public CameraHandler getHandler(){
             synchronized (mReadyFence){
                 try {
                     mReadyFence.wait();
@@ -280,7 +197,7 @@ public class CameraGLView extends GLSurfaceView {
         public void run() {
             synchronized (mReadyFence){
                 Log.d(TAG, "run: ");
-                mHandler = new CmaeraHandler(this);
+                mHandler = new CameraHandler(this);
                 mIsRunning = true;
                 mReadyFence.notify();
             }

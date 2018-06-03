@@ -1,29 +1,20 @@
 package com.example.asus1.teacherbyvideo.activities;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
-import android.hardware.Camera;
-import android.media.MediaRecorder;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.asus1.teacherbyvideo.R;
-import com.example.asus1.teacherbyvideo.views.CameraGLView;
-import com.example.asus1.teacherbyvideo.views.VideoRecordView;
+import com.example.asus1.teacherbyvideo.views.CameraGLViews.CameraGLView;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
