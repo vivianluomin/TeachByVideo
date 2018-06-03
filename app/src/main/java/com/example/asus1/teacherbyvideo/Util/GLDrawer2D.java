@@ -21,7 +21,6 @@ public class GLDrawer2D {
             + "	gl_Position = uMVPMatrix * aPosition;\n"
             + "	vTextureCoord = (uTexMatrix * aTextureCoord).xy;\n"
             + "}\n";
-
     private static final String fss
             = "#extension GL_OES_EGL_image_external : require\n"
             + "precision mediump float;\n"
@@ -31,11 +30,10 @@ public class GLDrawer2D {
             + "  gl_FragColor = texture2D(sTexture, vTextureCoord);\n"
             + "}";
 
+    private static final float[] VERTICES = { 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f };
+    private static final float[] TEXCOORD = { 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f };
 
-    private static final float[] VERTICES = {1.0f,1.0f,-1.0f,1.0f,1.0f,-1.0f,-1.0f,-1.0f};
-    private static final float[]  TEXCOORD = {1.0f,1.0f,0.0f,1.0f,1.0f,0.0f,0.0f,0.0f};
-
-    private final FloatBuffer pVertes;
+    private final FloatBuffer pVertex;
     private final FloatBuffer pTexCoord;
 
     private int hProgram;
@@ -50,36 +48,31 @@ public class GLDrawer2D {
     private static final int VERTEX_NUM = 4;
     private static final int VERTEX_SZ = VERTEX_NUM*2;
 
-    public GLDrawer2D(){
-        pVertes = ByteBuffer.allocateDirect(VERTEX_SZ*FLOAT_SZ).
-                order(ByteOrder.nativeOrder()).asFloatBuffer();
-        pVertes.put(VERTICES);
-        pVertes.position(0);
-
-        pTexCoord = ByteBuffer.allocateDirect(VERTEX_SZ *FLOAT_SZ)
+    public GLDrawer2D() {
+        pVertex = ByteBuffer.allocateDirect(VERTEX_SZ * FLOAT_SZ)
+                .order(ByteOrder.nativeOrder()).asFloatBuffer();
+        pVertex.put(VERTICES);
+        pVertex.flip();
+        pTexCoord = ByteBuffer.allocateDirect(VERTEX_SZ * FLOAT_SZ)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         pTexCoord.put(TEXCOORD);
-        pTexCoord.position(0);
+        pTexCoord.flip();
 
-        hProgram = loadShader(vss,fss);
+        hProgram = loadShader(vss, fss);
         GLES20.glUseProgram(hProgram);
+        maPositionLoc = GLES20.glGetAttribLocation(hProgram, "aPosition");
+        maTextureCoordLoc = GLES20.glGetAttribLocation(hProgram, "aTextureCoord");
+        muMVPMatrixLoc = GLES20.glGetUniformLocation(hProgram, "uMVPMatrix");
+        muTexMatrixLoc = GLES20.glGetUniformLocation(hProgram, "uTexMatrix");
 
-        maPositionLoc = GLES20.glGetAttribLocation(hProgram,"aPosition");
-        maTextureCoordLoc = GLES20.glGetAttribLocation(hProgram,"aTextureCoord");
-        muMVPMatrixLoc = GLES20.glGetAttribLocation(hProgram,"uMVPMatrix");
-        muTexMatrixLoc = GLES20.glGetAttribLocation(hProgram,"uTexMatrix");
-
-        Matrix.setIdentityM(mMvpMatrix,0);
-        GLES20.glUniformMatrix4fv(muMVPMatrixLoc,1,false,mMvpMatrix,0);
-        GLES20.glUniformMatrix4fv(muTexMatrixLoc,1,false,mMvpMatrix,0);
-        GLES20.glVertexAttribPointer(maPositionLoc,2,
-                GLES20.GL_FLOAT,false,VERTEX_SZ,pVertes);
-        GLES20.glVertexAttribPointer(maTextureCoordLoc,2
-                ,GLES20.GL_FLOAT,false,VERTEX_SZ,pTexCoord);
+        Matrix.setIdentityM(mMvpMatrix, 0);
+        GLES20.glUniformMatrix4fv(muMVPMatrixLoc, 1, false, mMvpMatrix, 0);
+        GLES20.glUniformMatrix4fv(muTexMatrixLoc, 1, false, mMvpMatrix, 0);
+        GLES20.glVertexAttribPointer(maPositionLoc, 2, GLES20.GL_FLOAT, false, VERTEX_SZ, pVertex);
+        GLES20.glVertexAttribPointer(maTextureCoordLoc, 2, GLES20.GL_FLOAT,
+                false, VERTEX_SZ, pTexCoord);
         GLES20.glEnableVertexAttribArray(maPositionLoc);
         GLES20.glEnableVertexAttribArray(maTextureCoordLoc);
-
-
     }
 
     public void release(){
@@ -89,16 +82,16 @@ public class GLDrawer2D {
         }
     }
 
-    public void draw(final int tex_id,float[] tex_matrix){
+    public void draw(final int tex_id, final float[] tex_matrix) {
         GLES20.glUseProgram(hProgram);
-        if(tex_matrix!=null){
-            GLES20.glUniformMatrix4fv(muTexMatrixLoc,1,false,tex_matrix,0);
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE);
-            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,tex_id);
-            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,VERTEX_NUM);
-            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,0);
-            GLES20.glUseProgram(hProgram);
-        }
+        if (tex_matrix != null)
+            GLES20.glUniformMatrix4fv(muTexMatrixLoc, 1, false, tex_matrix, 0);
+        GLES20.glUniformMatrix4fv(muMVPMatrixLoc, 1, false, mMvpMatrix, 0);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, tex_id);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, VERTEX_NUM);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
+        GLES20.glUseProgram(0);
     }
 
     public void setMatrix(float[] matrix,int offset){
@@ -110,6 +103,7 @@ public class GLDrawer2D {
         }
     }
 
+    //生成纹理ID
     public static int initTex(){
          int[] tex = new int[1];
          GLES20.glGenTextures(1,tex,0);

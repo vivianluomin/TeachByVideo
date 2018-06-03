@@ -55,9 +55,12 @@ public class CameraGLView extends GLSurfaceView {
 
     @Override
     public void onResume() {
+
         super.onResume();
+        Log.d(TAG, "onResume: ");
         if(mHasSurface){
             if(mCameraHandler == null){
+                Log.d(TAG, "onResume: 222222222222");
                 startPreview(getWidth(),  getHeight());
             }
         }
@@ -109,6 +112,7 @@ public class CameraGLView extends GLSurfaceView {
     }
 
     private synchronized void startPreview(final int width, final int height) {
+        Log.d(TAG, "startPreview: ");
         if (mCameraHandler == null) {
             final CameraThread thread = new CameraThread(this);
             thread.start();
@@ -137,12 +141,14 @@ public class CameraGLView extends GLSurfaceView {
 
         @Override
         public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+           // Log.d(TAG, "onFrameAvailable: ");
             requestUpdateTex = true;
 
         }
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            Log.d(TAG, "onSurfaceCreated: ");
             hTex = GLDrawer2D.initTex();
             mSTexture = new SurfaceTexture(hTex);
             mSTexture.setOnFrameAvailableListener(this);
@@ -157,6 +163,7 @@ public class CameraGLView extends GLSurfaceView {
 
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
+            Log.d(TAG, "onSurfaceChanged: ");
             if ((width == 0) || (height == 0)) return;
                 GLES20.glViewport(0,0,width,height);
             if (mParent != null) {
@@ -191,6 +198,8 @@ public class CameraGLView extends GLSurfaceView {
                 mSTexture.updateTexImage();
                 mSTexture.getTransformMatrix(mStMatrix);
             }
+
+            //Log.d(TAG, "onDrawFrame: "+mStMatrix.length);
 
             mDrawer.draw(hTex,mStMatrix);
         }
@@ -270,6 +279,7 @@ public class CameraGLView extends GLSurfaceView {
         @Override
         public void run() {
             synchronized (mReadyFence){
+                Log.d(TAG, "run: ");
                 mHandler = new CmaeraHandler(this);
                 mIsRunning = true;
                 mReadyFence.notify();
@@ -283,8 +293,10 @@ public class CameraGLView extends GLSurfaceView {
         }
 
         private final void startPreview(int width,int height){
+            Log.d(TAG, "startPreview: 11111111111111 ");
             if(mParent !=null && mCamers == null){
                 try {
+                    Log.d(TAG, "startPreview: 22222");
                     mCamers = Camera.open(CAMERA_ID);
                     Camera.Parameters parameters = mCamers.getParameters();
                     List<String> focusModes = parameters.getSupportedFocusModes();
