@@ -42,6 +42,8 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
     }
 
+    
+
     private void init(){
         mPlayImage = (ImageView)findViewById(R.id.ivbtn_play);
         //mPlayImage.setVideoSize(1280, 720);
