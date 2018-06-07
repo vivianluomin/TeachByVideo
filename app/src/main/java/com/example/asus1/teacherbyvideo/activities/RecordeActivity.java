@@ -12,9 +12,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.asus1.teacherbyvideo.Encoder.MediaAudioEncoder;
+import com.example.asus1.teacherbyvideo.Encoder.MediaEncoder;
+import com.example.asus1.teacherbyvideo.Encoder.MediaMuxerWrapper;
+import com.example.asus1.teacherbyvideo.Encoder.MediaVideoEncoder;
 import com.example.asus1.teacherbyvideo.R;
 import com.example.asus1.teacherbyvideo.views.CameraGLViews.CameraGLView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +34,16 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     private ImageView mBack;
     private ImageView mChangeCamera;
 
+    private int mWidth;
+    private int mHeight;
+
+
+    private MediaMuxerWrapper mMuxer;
+    private MediaVideoEncoder mVedioEncoder;
+    private MediaAudioEncoder mAudiaEncoder;
+
+    private boolean mRecord = false;
+
 
     private static final String TAG = "PlayActivity";
 
@@ -37,6 +52,9 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorde);
         getWindow().setFormat(PixelFormat.TRANSPARENT);
+        mWidth = getWindow().getDecorView().getWidth();
+        mHeight = getWindow().getDecorView().getHeight();
+        Log.d(TAG, "mWidth: "+mWidth+ "  mHeight: " +mHeight);
         init();
 
 
@@ -127,7 +145,13 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
         switch (v.getId()){
             case R.id.ivbtn_play:
-
+                if(mRecord){
+                    stopRecord();
+                    mRecord = false;
+                }else {
+                    startRecording();
+                    mRecord = true;
+                }
                 break;
 
             case R.id.iv_camera:
@@ -142,6 +166,47 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         }
 
     }
+
+    private void startRecording(){
+
+        try {
+            mPlayImage.setImageResource(R.mipmap.ic_recode);
+            mMuxer = new MediaMuxerWrapper(".mp4");
+            mVedioEncoder = new MediaVideoEncoder(mMuxer,mEncoderListener,
+                    mPlayView.getVideoWidth(),mPlayView.getVideoHeight());
+            mAudiaEncoder = new MediaAudioEncoder(mMuxer,mEncoderListener);
+
+            mMuxer.prepare();
+            mMuxer.startRecoding();
+        }catch (IOException e){
+
+        }
+
+
+    }
+
+    private void stopRecord(){
+
+            mPlayImage.setImageResource(R.mipmap.ic_pause);
+            mMuxer.stopRecording();
+
+    }
+
+    private MediaEncoder.MediaEncoderListener mEncoderListener = new MediaEncoder.MediaEncoderListener() {
+        @Override
+        public void onPrepares(MediaEncoder encoder) {
+            if(encoder instanceof MediaVideoEncoder){
+                mPlayView.setVedioEncoder((MediaVideoEncoder)encoder);
+            }
+        }
+
+        @Override
+        public void onStop(MediaEncoder encoder) {
+            if(encoder instanceof MediaVideoEncoder){
+                mPlayView.setVedioEncoder(null);
+            }
+        }
+    };
 
     @Override
     protected void onResume() {

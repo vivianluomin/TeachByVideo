@@ -6,6 +6,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.example.asus1.teacherbyvideo.Encoder.MediaVideoEncoder;
 import com.example.asus1.teacherbyvideo.Util.GLDrawer2D;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -22,6 +23,9 @@ public final class CameraSurfaceRenderer implements GLSurfaceView.Renderer,
     private GLDrawer2D mDrawer;
     private final float[] mStMatrix = new float[16];
     private final float[] mMvpMatrix = new float[16];
+
+    private MediaVideoEncoder mVideoEncoder;
+
 
     public CameraSurfaceRenderer(CameraGLView parent) {
         mParent = parent;
@@ -76,6 +80,14 @@ public final class CameraSurfaceRenderer implements GLSurfaceView.Renderer,
         GLDrawer2D.deleteTex(hTex);
     }
 
+    public int getTexID(){
+        return hTex;
+    }
+
+    public void setEncoder(MediaVideoEncoder encoder){
+        mVideoEncoder = encoder;
+    }
+
     private volatile boolean requestUpdateTex = false;
     private boolean flip = true;
 
@@ -92,5 +104,14 @@ public final class CameraSurfaceRenderer implements GLSurfaceView.Renderer,
         //Log.d(TAG, "onDrawFrame: "+mStMatrix.length);
 
         mDrawer.draw(hTex,mStMatrix);
+        flip = !flip;
+        if(flip){
+            synchronized (this){
+                if(mVideoEncoder!=null){
+                    mVideoEncoder.frameAvailableSoon(mStMatrix,mMvpMatrix);
+                }
+            }
+        }
+
     }
 }

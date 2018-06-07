@@ -67,8 +67,10 @@ public class MediaVideoEncoder extends MediaEncoder {
         }
 
         MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE,mWidth,mHeight);
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT,MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        format.setInteger(MediaFormat.KEY_BIT_RATE,FRAME_RATE);
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        format.setInteger(MediaFormat.KEY_BIT_RATE,calcBitRate());
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL,10);
 
         mMediaCodec = MediaCodec.createEncoderByType(MIME_TYPE);
@@ -140,6 +142,7 @@ public class MediaVideoEncoder extends MediaEncoder {
         }
         return null;
     }
+
 
     protected static final int selectColorFormat(final MediaCodecInfo codecInfo, final String mimeType) {
         int result = 0;

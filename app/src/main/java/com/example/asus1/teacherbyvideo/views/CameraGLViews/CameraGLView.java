@@ -3,6 +3,7 @@ package com.example.asus1.teacherbyvideo.views.CameraGLViews;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -16,6 +17,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
+import com.example.asus1.teacherbyvideo.Encoder.MediaVideoEncoder;
 import com.example.asus1.teacherbyvideo.Util.GLDrawer2D;
 
 import java.io.IOException;
@@ -41,6 +43,8 @@ public class CameraGLView extends GLSurfaceView {
     private int mVideoWidth, mVideoHeight;
     private int mRotation;
     private int mScaleMode = SCALE_STRETCH_FIT;
+
+    private MediaVideoEncoder mVediaEncoder;
 
     public CameraGLView(Context context) {
         this(context,null);
@@ -90,6 +94,29 @@ public class CameraGLView extends GLSurfaceView {
 //                mRenderer.updateViewport();
 //            }
 //        });
+    }
+
+    public int getVideoWidth() {
+        return mVideoWidth;
+    }
+
+    public int getVideoHeight() {
+        return mVideoHeight;
+    }
+
+    public void setVedioEncoder(final MediaVideoEncoder encoder){
+        mVediaEncoder = encoder;
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (mRenderer){
+                    if(encoder!=null){
+                        encoder.setEglContext(EGL14.eglGetCurrentContext(),mRenderer.getTexID());
+                    }
+                    mRenderer.setEncoder(encoder);
+                }
+            }
+        });
     }
 
     public SurfaceTexture getSurfaceTexture() {
