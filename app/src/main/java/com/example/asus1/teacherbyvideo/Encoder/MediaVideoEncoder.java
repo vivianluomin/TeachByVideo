@@ -1,5 +1,7 @@
 package com.example.asus1.teacherbyvideo.Encoder;
 
+import java.io.IOException;
+
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
@@ -8,14 +10,13 @@ import android.opengl.EGLContext;
 import android.util.Log;
 import android.view.Surface;
 
-import java.io.IOException;
 
 public class MediaVideoEncoder extends MediaEncoder {
-
+    private static final boolean DEBUG = false;	// TODO set false on release
     private static final String TAG = "MediaVideoEncoder";
 
     private static final String MIME_TYPE = "video/avc";
-
+    // parameters for recording
     private static final int FRAME_RATE = 25;
     private static final float BPP = 0.25f;
 
@@ -24,13 +25,12 @@ public class MediaVideoEncoder extends MediaEncoder {
     private RenderHandler mRenderHandler;
     private Surface mSurface;
 
-    public MediaVideoEncoder(MediaMuxerWrapper muxer, MediaEncoderListener listener
-            ,int width,int height) {
+    public MediaVideoEncoder(final MediaMuxerWrapper muxer, final MediaEncoderListener listener, final int width, final int height) {
         super(muxer, listener);
+        if (DEBUG) Log.i(TAG, "MediaVideoEncoder: ");
         mWidth = width;
         mHeight = height;
         mRenderHandler = RenderHandler.createHandler(TAG);
-
     }
 
     public boolean frameAvailableSoon(final float[] tex_matrix) {
@@ -55,34 +55,39 @@ public class MediaVideoEncoder extends MediaEncoder {
         return result;
     }
 
-
     @Override
-    void prepare() throws IOException {
+    protected void prepare() throws IOException {
+        if (DEBUG) Log.i(TAG, "prepare: ");
         mTrackIndex = -1;
         mMuxerStarted = mIsEOS = false;
-        MediaCodecInfo videoCodecInfo = selectVideoCodec(MIME_TYPE);
+
+        final MediaCodecInfo videoCodecInfo = selectVideoCodec(MIME_TYPE);
         if (videoCodecInfo == null) {
             Log.e(TAG, "Unable to find an appropriate codec for " + MIME_TYPE);
             return;
         }
+        if (DEBUG) Log.i(TAG, "selected codec: " + videoCodecInfo.getName());
 
-        MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE,mWidth,mHeight);
+        final MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, mWidth, mHeight);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        format.setInteger(MediaFormat.KEY_BIT_RATE,calcBitRate());
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);	// API >= 18
+        format.setInteger(MediaFormat.KEY_BIT_RATE, calcBitRate());
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL,10);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
+        if (DEBUG) Log.i(TAG, "format: " + format);
 
         mMediaCodec = MediaCodec.createEncoderByType(MIME_TYPE);
-        mMediaCodec.configure(format,null,null,MediaCodec.CONFIGURE_FLAG_ENCODE);
-
-        mSurface = mMediaCodec.createInputSurface();
+        mMediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        // get Surface for encoder input
+        // this method only can call between #configure and #start
+        mSurface = mMediaCodec.createInputSurface();	// API >= 18
         mMediaCodec.start();
-        if(mListener !=null){
+        if (DEBUG) Log.i(TAG, "prepare finishing");
+        if (mListener != null) {
             try {
-                mListener.onPrepares(this);
-            }catch (Exception e){
-                e.printStackTrace();
+                mListener.onPrepared(this);
+            } catch (final Exception e) {
+                Log.e(TAG, "prepare:", e);
             }
         }
     }
@@ -93,7 +98,7 @@ public class MediaVideoEncoder extends MediaEncoder {
 
     @Override
     protected void release() {
-
+        if (DEBUG) Log.i(TAG, "release:");
         if (mSurface != null) {
             mSurface.release();
             mSurface = null;
@@ -116,9 +121,8 @@ public class MediaVideoEncoder extends MediaEncoder {
      * @param mimeType
      * @return null if no codec matched
      */
-
     protected static final MediaCodecInfo selectVideoCodec(final String mimeType) {
-
+        if (DEBUG) Log.v(TAG, "selectVideoCodec:");
 
         // get the list of available codecs
         final int numCodecs = MediaCodecList.getCodecCount();
@@ -132,7 +136,7 @@ public class MediaVideoEncoder extends MediaEncoder {
             final String[] types = codecInfo.getSupportedTypes();
             for (int j = 0; j < types.length; j++) {
                 if (types[j].equalsIgnoreCase(mimeType)) {
-
+                    if (DEBUG) Log.i(TAG, "codec:" + codecInfo.getName() + ",MIME=" + types[j]);
                     final int format = selectColorFormat(codecInfo, mimeType);
                     if (format > 0) {
                         return codecInfo;
@@ -143,8 +147,12 @@ public class MediaVideoEncoder extends MediaEncoder {
         return null;
     }
 
-
+    /**
+     * select color format available on specific codec and we can use.
+     * @return 0 if no colorFormat is matched
+     */
     protected static final int selectColorFormat(final MediaCodecInfo codecInfo, final String mimeType) {
+        if (DEBUG) Log.i(TAG, "selectColorFormat: ");
         int result = 0;
         final MediaCodecInfo.CodecCapabilities caps;
         try {
@@ -167,6 +175,9 @@ public class MediaVideoEncoder extends MediaEncoder {
         return result;
     }
 
+    /**
+     * color formats that we can use in this class
+     */
     protected static int[] recognizedFormats;
     static {
         recognizedFormats = new int[] {
@@ -178,7 +189,7 @@ public class MediaVideoEncoder extends MediaEncoder {
     }
 
     private static final boolean isRecognizedViewoFormat(final int colorFormat) {
-
+        if (DEBUG) Log.i(TAG, "isRecognizedViewoFormat:colorFormat=" + colorFormat);
         final int n = recognizedFormats != null ? recognizedFormats.length : 0;
         for (int i = 0; i < n; i++) {
             if (recognizedFormats[i] == colorFormat) {
@@ -189,7 +200,8 @@ public class MediaVideoEncoder extends MediaEncoder {
     }
 
     @Override
-    protected void singalEndOfInputStream() {
+    protected void signalEndOfInputStream() {
+        if (DEBUG) Log.d(TAG, "sending EOS to encoder");
         mMediaCodec.signalEndOfInputStream();	// API >= 18
         mIsEOS = true;
     }

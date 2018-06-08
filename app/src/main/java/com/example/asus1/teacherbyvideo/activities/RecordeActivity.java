@@ -145,7 +145,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
         switch (v.getId()){
             case R.id.ivbtn_play:
-                if(mRecord){
+                if(mMuxer != null){
                     stopRecord();
                     mRecord = false;
                 }else {
@@ -177,7 +177,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
             mAudiaEncoder = new MediaAudioEncoder(mMuxer,mEncoderListener);
 
             mMuxer.prepare();
-            mMuxer.startRecoding();
+            mMuxer.startRecording();
         }catch (IOException e){
 
         }
@@ -188,20 +188,24 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     private void stopRecord(){
 
             mPlayImage.setImageResource(R.mipmap.ic_pause);
+        if (mMuxer != null) {
             mMuxer.stopRecording();
+            mMuxer = null;
+            // you should not wait here
+        }
 
     }
 
     private MediaEncoder.MediaEncoderListener mEncoderListener = new MediaEncoder.MediaEncoderListener() {
         @Override
-        public void onPrepares(MediaEncoder encoder) {
+        public void onPrepared(MediaEncoder encoder) {
             if(encoder instanceof MediaVideoEncoder){
                 mPlayView.setVedioEncoder((MediaVideoEncoder)encoder);
             }
         }
 
         @Override
-        public void onStop(MediaEncoder encoder) {
+        public void onStopped(MediaEncoder encoder) {
             if(encoder instanceof MediaVideoEncoder){
                 mPlayView.setVedioEncoder(null);
             }

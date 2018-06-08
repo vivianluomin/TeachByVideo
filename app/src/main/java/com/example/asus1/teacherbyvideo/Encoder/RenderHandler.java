@@ -11,8 +11,8 @@ import android.view.SurfaceHolder;
 
 import com.example.asus1.teacherbyvideo.Util.GLDrawer2D;
 
-public class RenderHandler implements Runnable {
-
+public final class RenderHandler implements Runnable {
+    private static final boolean DEBUG = false;	// TODO set false on release
     private static final String TAG = "RenderHandler";
 
     private final Object mSync = new Object();
@@ -27,7 +27,7 @@ public class RenderHandler implements Runnable {
     private int mRequestDraw;
 
     public static final RenderHandler createHandler(final String name) {
-        //if (DEBUG) Log.v(TAG, "createHandler:");
+        if (DEBUG) Log.v(TAG, "createHandler:");
         final RenderHandler handler = new RenderHandler();
         synchronized (handler.mSync) {
             new Thread(handler, !TextUtils.isEmpty(name) ? name : TAG).start();
@@ -39,13 +39,13 @@ public class RenderHandler implements Runnable {
         return handler;
     }
 
-    public final void setEglContext(EGLContext shared_context,int tex_id,
-                                    Object surface,boolean isRecordable){
+    public final void setEglContext(final EGLContext shared_context, final int tex_id,
+                                    final Object surface, final boolean isRecordable) {
+        if (DEBUG) Log.i(TAG, "setEglContext:");
         if (!(surface instanceof Surface) && !(surface instanceof SurfaceTexture) && !(surface instanceof SurfaceHolder))
             throw new RuntimeException("unsupported window type:" + surface);
-
-        synchronized (mSync){
-            if(mRequestRelease) return;
+        synchronized (mSync) {
+            if (mRequestRelease) return;
             mShard_context = shared_context;
             mTexId = tex_id;
             mSurface = surface;
@@ -81,18 +81,26 @@ public class RenderHandler implements Runnable {
         draw(tex_id, tex_matrix, null);
     }
 
-    public final void draw(int tex_id,float[] tex_matrix,float[] mvp_matrix){
-        synchronized (mSync){
-            if(mRequestRelease) return;
+    public final void draw(final int tex_id, final float[] tex_matrix, final float[] mvp_matrix) {
+        synchronized (mSync) {
+            if (mRequestRelease) return;
             mTexId = tex_id;
-            if(tex_matrix !=null && tex_matrix.length >=16){
+            if ((tex_matrix != null) && (tex_matrix.length >= 16)) {
                 System.arraycopy(tex_matrix, 0, mMatrix, 0, 16);
-        } else {
-            Matrix.setIdentityM(mMatrix, 0);
-        }
-
-        mRequestDraw ++;
+            } else {
+                Matrix.setIdentityM(mMatrix, 0);
+            }
+            if ((mvp_matrix != null) && (mvp_matrix.length >= 16)) {
+                System.arraycopy(mvp_matrix, 0, mMatrix, 16, 16);
+            } else {
+                Matrix.setIdentityM(mMatrix, 16);
+            }
+            mRequestDraw++;
             mSync.notifyAll();
+/*			try {
+				mSync.wait();
+			} catch (final InterruptedException e) {
+			} */
         }
     }
 
@@ -103,7 +111,7 @@ public class RenderHandler implements Runnable {
     }
 
     public final void release() {
-       // if (DEBUG) Log.i(TAG, "release:");
+        if (DEBUG) Log.i(TAG, "release:");
         synchronized (mSync) {
             if (mRequestRelease) return;
             mRequestRelease = true;
@@ -115,44 +123,45 @@ public class RenderHandler implements Runnable {
         }
     }
 
+    //********************************************************************************
+//********************************************************************************
     private EGLBase mEgl;
     private EGLBase.EglSurface mInputSurface;
     private GLDrawer2D mDrawer;
 
-
     @Override
-    public void run() {
-        synchronized (mSync){
+    public final void run() {
+        if (DEBUG) Log.i(TAG, "RenderHandler thread started:");
+        synchronized (mSync) {
             mRequestSetEglContext = mRequestRelease = false;
             mRequestDraw = 0;
             mSync.notifyAll();
         }
-
         boolean localRequestDraw;
-        for(;;){
-            synchronized (mSync){
-                if(mRequestRelease) break;
-                if(mRequestSetEglContext){
+        for (;;) {
+            synchronized (mSync) {
+                if (mRequestRelease) break;
+                if (mRequestSetEglContext) {
                     mRequestSetEglContext = false;
                     internalPrepare();
                 }
-
-                localRequestDraw = mRequestDraw>0;
-                if(localRequestDraw){
+                localRequestDraw = mRequestDraw > 0;
+                if (localRequestDraw) {
                     mRequestDraw--;
+//					mSync.notifyAll();
                 }
             }
-
-            if(localRequestDraw){
-                if(mEgl == null &&mTexId >=0){
+            if (localRequestDraw) {
+                if ((mEgl != null) && mTexId >= 0) {
                     mInputSurface.makeCurrent();
+                    // clear screen with yellow color so that you can see rendering rectangle
                     GLES20.glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
                     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
                     mDrawer.setMatrix(mMatrix, 16);
                     mDrawer.draw(mTexId, mMatrix);
                     mInputSurface.swap();
                 }
-            }else {
+            } else {
                 synchronized(mSync) {
                     try {
                         mSync.wait();
@@ -162,15 +171,16 @@ public class RenderHandler implements Runnable {
                 }
             }
         }
-
-        synchronized (mSync){
+        synchronized (mSync) {
             mRequestRelease = true;
             internalRelease();
             mSync.notifyAll();
         }
+        if (DEBUG) Log.i(TAG, "RenderHandler thread finished:");
     }
 
     private final void internalPrepare() {
+        if (DEBUG) Log.i(TAG, "internalPrepare:");
         internalRelease();
         mEgl = new EGLBase(mShard_context, false, mIsRecordable);
 
@@ -183,7 +193,7 @@ public class RenderHandler implements Runnable {
     }
 
     private final void internalRelease() {
-
+        if (DEBUG) Log.i(TAG, "internalRelease:");
         if (mInputSurface != null) {
             mInputSurface.release();
             mInputSurface = null;
@@ -197,4 +207,5 @@ public class RenderHandler implements Runnable {
             mEgl = null;
         }
     }
+
 }

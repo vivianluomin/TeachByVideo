@@ -145,7 +145,7 @@ public class CameraGLView extends GLSurfaceView {
             thread.start();
             mCameraHandler = thread.getHandler();
         }
-        mCameraHandler.startPreview(1280, 720/*width, height*/);
+        mCameraHandler.startPreview(width, height/*width, height*/);
     }
 
 
