@@ -358,7 +358,7 @@ public abstract class MediaEncoder implements Runnable {
     /**
      * previous presentationTimeUs for writing
      */
-    private long prevOutputPTSUs = 0;
+    public static long prevOutputPTSUs = 0;
     /**
      * get next encoding presentationTimeUs
      * @return

@@ -33,16 +33,12 @@ public class CameraGLView extends GLSurfaceView {
     private static final String TAG = "CameraGLView";
 
     private static final int CAMERA_ID = 1;
-
-    private static final int SCALE_STRETCH_FIT = 0;
-    private static final int SCALE_KEEP_ASPECT_VIEWPORT = 1;
-
+    
     private final CameraSurfaceRenderer mRenderer;
     public boolean mHasSurface;
     private CameraHandler mCameraHandler = null;
     private int mVideoWidth, mVideoHeight;
     private int mRotation;
-    private int mScaleMode = SCALE_STRETCH_FIT;
 
     private MediaVideoEncoder mVediaEncoder;
 
@@ -145,7 +141,8 @@ public class CameraGLView extends GLSurfaceView {
             thread.start();
             mCameraHandler = thread.getHandler();
         }
-        mCameraHandler.startPreview(width, height/*width, height*/);
+        Log.d(TAG, "startPreview: handler_startPreview");
+        mCameraHandler.startPreview(height, width/*width, height*/);
     }
 
 
@@ -211,12 +208,13 @@ public class CameraGLView extends GLSurfaceView {
         public CameraHandler getHandler(){
             synchronized (mReadyFence){
                 try {
+                    Log.d(TAG, "getHandler: ");
                     mReadyFence.wait();
                 }catch (InterruptedException e){
 
                 }
             }
-
+            Log.d(TAG, "getHandler: 222222222222222");
             return mHandler;
         }
 
@@ -231,6 +229,7 @@ public class CameraGLView extends GLSurfaceView {
 
             Looper.loop();
             synchronized (mReadyFence){
+                Log.d(TAG, "run: 2222222222222222");
                 mHandler = null;
                 mIsRunning = false;
             }

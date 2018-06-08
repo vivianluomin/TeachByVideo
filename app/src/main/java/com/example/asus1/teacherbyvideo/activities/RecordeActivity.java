@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.asus1.teacherbyvideo.Encoder.MediaAudioEncoder;
@@ -42,6 +43,10 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     private MediaVideoEncoder mVedioEncoder;
     private MediaAudioEncoder mAudiaEncoder;
 
+    private ImageView mDelete;
+    private ImageView mMask;
+    private TextView mTime;
+
     private boolean mRecord = false;
 
 
@@ -52,9 +57,6 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorde);
         getWindow().setFormat(PixelFormat.TRANSPARENT);
-        mWidth = getWindow().getDecorView().getWidth();
-        mHeight = getWindow().getDecorView().getHeight();
-        Log.d(TAG, "mWidth: "+mWidth+ "  mHeight: " +mHeight);
         init();
 
 
@@ -64,7 +66,6 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
     private void init(){
         mPlayImage = (ImageView)findViewById(R.id.ivbtn_play);
-        //mPlayImage.setVideoSize(1280, 720);
         mPlayView = (CameraGLView) findViewById(R.id.surfaceview);
         mPlayImage.setOnClickListener(this);
         mPreview = (ImageView)findViewById(R.id.iv_preview);
@@ -77,67 +78,20 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
             }
         });
 
+        mDelete = (ImageView)findViewById(R.id.iv_delete);
+        mDelete.setOnClickListener(this);
+
+        mMask = (ImageView)findViewById(R.id.iv_mask);
+        mMask.setOnClickListener(this);
+
+        mTime = (TextView)findViewById(R.id.tv_time) ;
+
+
         mChangeCamera = (ImageView)findViewById(R.id.iv_camera);
         mChangeCamera.setOnClickListener(this);
 
-        //setPermission();
 
 
-    }
-
-
-
-
-    private void setPermission(){
-        permissions = new String[3];
-        mPer = new ArrayList<>();
-        permissions[0] = Manifest.permission.RECORD_AUDIO;
-        permissions[1] = Manifest.permission.CAMERA;
-        permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-
-        for(int i = 0;i<permissions.length;i++){
-            if(ContextCompat.checkSelfPermission
-                    (this,permissions[i])
-                    != PackageManager.PERMISSION_GRANTED){
-                mPer.add(permissions[i]);
-            }
-        }
-        if(mPer.size()>0){
-            ActivityCompat.requestPermissions(this,
-                    (String[]) mPer.toArray(new String[mPer.size()]),100);
-        }else {
-            setRecorder();
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 100){
-            if(grantResults.length>0){
-                for(int i = 0;i<grantResults.length;i++){
-                    Log.d(TAG, "onRequestPermissionsResult: ");
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                        Toast.makeText(this,"你拒绝了该请求",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-                setRecorder();
-
-            }
-        }
-
-
-    }
-
-
-
-    private void setRecorder(){
-      // mPlayView.onResume();
     }
 
     @Override
@@ -170,7 +124,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     private void startRecording(){
 
         try {
-            mPlayImage.setImageResource(R.mipmap.ic_recode);
+            mPlayImage.setImageResource(R.mipmap.ic_pause);
             mMuxer = new MediaMuxerWrapper(".mp4");
             mVedioEncoder = new MediaVideoEncoder(mMuxer,mEncoderListener,
                     mPlayView.getVideoWidth(),mPlayView.getVideoHeight());
@@ -187,7 +141,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
     private void stopRecord(){
 
-            mPlayImage.setImageResource(R.mipmap.ic_pause);
+        mPlayImage.setImageResource(R.mipmap.ic_recode);
         if (mMuxer != null) {
             mMuxer.stopRecording();
             mMuxer = null;
@@ -221,7 +175,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
     @Override
     protected void onPause() {
-       // stopRecording();
+        // stopRecording();
         mPlayView.onPause();
         super.onPause();
     }
@@ -234,4 +188,51 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
         super.onDestroy();
     }
+
+
+    private void setPermission(){
+        permissions = new String[3];
+        mPer = new ArrayList<>();
+        permissions[0] = Manifest.permission.RECORD_AUDIO;
+        permissions[1] = Manifest.permission.CAMERA;
+        permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+
+        for(int i = 0;i<permissions.length;i++){
+            if(ContextCompat.checkSelfPermission
+                    (this,permissions[i])
+                    != PackageManager.PERMISSION_GRANTED){
+                mPer.add(permissions[i]);
+            }
+        }
+        if(mPer.size()>0){
+            ActivityCompat.requestPermissions(this,
+                    (String[]) mPer.toArray(new String[mPer.size()]),100);
+        }else {
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == 100){
+            if(grantResults.length>0){
+                for(int i = 0;i<grantResults.length;i++){
+                    Log.d(TAG, "onRequestPermissionsResult: ");
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                        Toast.makeText(this,"你拒绝了该请求",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+            }
+        }
+
+
+    }
+
+
 }

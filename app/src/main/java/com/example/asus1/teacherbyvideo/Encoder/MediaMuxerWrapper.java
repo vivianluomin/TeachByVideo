@@ -45,6 +45,7 @@ public class MediaMuxerWrapper {
         mMediaMuxer = new MediaMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         mEncoderCount = mStatredCount = 0;
         mIsStarted = false;
+
     }
 
     public String getOutputPath() {
