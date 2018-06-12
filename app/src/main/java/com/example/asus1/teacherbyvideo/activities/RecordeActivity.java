@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -53,26 +56,21 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     private ImageView mMask;
     private TextView mTime;
     private static final String DIR_NAME = "AVRecReal";
-    private static final SimpleDateFormat mDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.US);
+    private static final SimpleDateFormat mDateTimeFormat =
+            new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.CHINA);
+
+    private static final SimpleDateFormat mTimeFormat =
+            new SimpleDateFormat("mm:ss",Locale.CHINA);
 
     private String mOutputPath;
     private boolean mRecord = false;
 
     private static final String TAG = "PlayActivity";
 
+    private long mLimitTime = 5*60*1000;
+    private long time = 0;
+
     private ArrayList<String> mVideos = new ArrayList<>();
-
-    private TimerTask task = new TimerTask() {
-        @Override
-        public void run() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            });
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +111,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
 
 
+
     }
 
     @Override
@@ -132,19 +131,33 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
             case R.id.iv_camera:
                 break;
             case R.id.iv_preview:
-
-                VideoComposer composer = new VideoComposer
-                        (mVideos, mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES
-                                , ".mp4").toString());
-
-                if(composer.joinVideo() && mOutputPath!=null){
-                    Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
-                    intent.putExtra("video",mOutputPath);
-                    startActivity(intent);
-                }
+                preView();
                 break;
         }
 
+    }
+
+    private void preView(){
+        VideoComposer composer = new VideoComposer
+                (mVideos, mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES
+                        , ".mp4").toString());
+
+        if(composer.joinVideo() && mOutputPath!=null){
+            Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
+            intent.putExtra("video",mOutputPath);
+            deleteVideoShort();
+            mVideos.clear();
+            mVideos.add(mOutputPath);
+            startActivity(intent);
+        }
+    }
+
+    private void deleteVideoShort(){
+        for(int i =0;i<mVideos.size();i++){
+            String path = mVideos.get(i);
+            File file = new File(path);
+            file.deleteOnExit();
+        }
     }
 
     private void startRecording(){
@@ -157,6 +170,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
             mAudiaEncoder = new MediaAudioEncoder(mMuxer,mEncoderListener);
             mMuxer.prepare();
             mMuxer.startRecording();
+            mHandler.postDelayed(mTimerunnable,100);
         }catch (IOException e){
 
         }
@@ -233,4 +247,24 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         final GregorianCalendar now = new GregorianCalendar();
         return mDateTimeFormat.format(now.getTime());
     }
+
+    private Handler mHandler = new Handler();
+
+    private Runnable mTimerunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mRecord&&time<mLimitTime){
+                time+=100;
+                mTime.setText(mTimeFormat.format(new Date(time)));
+                mHandler.postDelayed(mTimerunnable,100);
+            }
+
+            if(mRecord&&time == mLimitTime){
+                mRecord = false;
+                stopRecord();
+                preView();
+            }
+
+        }
+    };
 }
