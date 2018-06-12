@@ -17,7 +17,7 @@ public class PlayVideoActivity extends BaseActivity implements MediaPlayer.OnCom
 
         MediaPlayer.OnPreparedListener,SurfaceHolder.Callback{
 
-    private MediaPlayer mRecorde;
+    private MediaPlayer mPlayer;
     private SurfaceView mPlayView;
     private ImageView mBack;
     private TextView mSaveNet;
@@ -50,8 +50,8 @@ public class PlayVideoActivity extends BaseActivity implements MediaPlayer.OnCom
 
     private void setVideo(){
         Uri uri = Uri.parse(mFilePath);
-        mRecorde = MediaPlayer.create(this,uri);
-       mRecorde.setOnCompletionListener(this);
+        mPlayer = MediaPlayer.create(this,uri);
+       mPlayer.setOnCompletionListener(this);
        mPlayView.getHolder().addCallback(this);
        mPlayView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
@@ -69,12 +69,12 @@ public class PlayVideoActivity extends BaseActivity implements MediaPlayer.OnCom
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        mRecorde.setDisplay(holder);
+        mPlayer.setDisplay(holder);
 //        if (mRecorde!=null){
 //            mRecorde.stop();
 //        }
 //        mRecorde.prepareAsync();
-        mRecorde.start();
+        mPlayer.start();
     }
 
     @Override

@@ -32,7 +32,7 @@ public class CameraGLView extends GLSurfaceView {
 
     private static final String TAG = "CameraGLView";
 
-    private static final int CAMERA_ID = 1;
+    public static   int CAMERA_ID = 1;
     
     private final CameraSurfaceRenderer mRenderer;
     public boolean mHasSurface;
@@ -91,6 +91,7 @@ public class CameraGLView extends GLSurfaceView {
 //            }
 //        });
     }
+
 
     public int getVideoWidth() {
         return mVideoWidth;
@@ -322,6 +323,7 @@ public class CameraGLView extends GLSurfaceView {
             }
             if (mParent == null) return;
             mParent.mCameraHandler = null;
+            mParent.mHasSurface = false;
 
         }
 
