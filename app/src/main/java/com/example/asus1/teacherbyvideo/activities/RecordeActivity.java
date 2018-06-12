@@ -1,8 +1,10 @@
 package com.example.asus1.teacherbyvideo.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,19 +19,22 @@ import com.example.asus1.teacherbyvideo.Encoder.MediaAudioEncoder;
 import com.example.asus1.teacherbyvideo.Encoder.MediaEncoder;
 import com.example.asus1.teacherbyvideo.Encoder.MediaMuxerWrapper;
 import com.example.asus1.teacherbyvideo.Encoder.MediaVideoEncoder;
+import com.example.asus1.teacherbyvideo.Encoder.VideoComposer;
 import com.example.asus1.teacherbyvideo.R;
 import com.example.asus1.teacherbyvideo.views.CameraGLViews.CameraGLView;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 public class RecordeActivity extends  BaseActivity implements View.OnClickListener{
 
     private ImageView mPlayImage;
     private CameraGLView mPlayView;
-    private String[] permissions;
-    private List<String> mPer;
 
     private ImageView mPreview;
     private ImageView mBack;
@@ -46,11 +51,15 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     private ImageView mDelete;
     private ImageView mMask;
     private TextView mTime;
+    private static final String DIR_NAME = "AVRecReal";
+    private static final SimpleDateFormat mDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.US);
 
+    private String mOutputPath;
     private boolean mRecord = false;
 
-
     private static final String TAG = "PlayActivity";
+
+    private ArrayList<String> mVideos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,10 +121,15 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
                 break;
             case R.id.iv_preview:
 
-//                Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
-//                intent.putExtra("video",mFilePath);
-//                startActivity(intent);
+                VideoComposer composer = new VideoComposer
+                        (mVideos, mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES
+                                , ".mp4").toString());
 
+                if(composer.joinVideo() && mOutputPath!=null){
+                    Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
+                    intent.putExtra("video",mOutputPath);
+                    startActivity(intent);
+                }
                 break;
         }
 
@@ -129,7 +143,6 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
             mVedioEncoder = new MediaVideoEncoder(mMuxer,mEncoderListener,
                     mPlayView.getVideoWidth(),mPlayView.getVideoHeight());
             mAudiaEncoder = new MediaAudioEncoder(mMuxer,mEncoderListener);
-
             mMuxer.prepare();
             mMuxer.startRecording();
         }catch (IOException e){
@@ -144,6 +157,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         mPlayImage.setImageResource(R.mipmap.ic_recode);
         if (mMuxer != null) {
             mMuxer.stopRecording();
+            mVideos.add(mMuxer.getOutputPath());
             mMuxer = null;
             // you should not wait here
         }
@@ -175,7 +189,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
 
     @Override
     protected void onPause() {
-        // stopRecording();
+        stopRecord();
         mPlayView.onPause();
         super.onPause();
     }
@@ -189,50 +203,22 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         super.onDestroy();
     }
 
-
-    private void setPermission(){
-        permissions = new String[3];
-        mPer = new ArrayList<>();
-        permissions[0] = Manifest.permission.RECORD_AUDIO;
-        permissions[1] = Manifest.permission.CAMERA;
-        permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-
-        for(int i = 0;i<permissions.length;i++){
-            if(ContextCompat.checkSelfPermission
-                    (this,permissions[i])
-                    != PackageManager.PERMISSION_GRANTED){
-                mPer.add(permissions[i]);
-            }
+    public static final File getCaptureFile(final String type, final String ext) {
+        final File dir = new File(Environment.getExternalStoragePublicDirectory(type), DIR_NAME);
+        Log.d(TAG, "path=" + dir.toString());
+        dir.mkdirs();
+        if (dir.canWrite()) {
+            return new File(dir, getDateTimeString() + ext);
         }
-        if(mPer.size()>0){
-            ActivityCompat.requestPermissions(this,
-                    (String[]) mPer.toArray(new String[mPer.size()]),100);
-        }else {
-        }
-
+        return null;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 100){
-            if(grantResults.length>0){
-                for(int i = 0;i<grantResults.length;i++){
-                    Log.d(TAG, "onRequestPermissionsResult: ");
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                        Toast.makeText(this,"你拒绝了该请求",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-
-            }
-        }
-
-
+    /**
+     * get current date and time as String
+     * @return
+     */
+    private static final String getDateTimeString() {
+        final GregorianCalendar now = new GregorianCalendar();
+        return mDateTimeFormat.format(now.getTime());
     }
-
-
 }

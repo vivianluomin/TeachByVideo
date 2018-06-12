@@ -88,6 +88,8 @@ public class MainActivity extends BaseActivity {
         mTransaction = mManager.beginTransaction();
         mTransaction.replace(R.id.fragment_container,new TeachFallFragment());
         mTransaction.commit();
-
     }
+
+
+
 }

@@ -70,6 +70,7 @@ public abstract class MediaEncoder implements Runnable {
         synchronized (mSync) {
             // create BufferInfo here for effectiveness(to reduce GC)
             mBufferInfo = new MediaCodec.BufferInfo();
+
             // wait for starting thread
             new Thread(this, getClass().getSimpleName()).start();
             try {
@@ -114,6 +115,7 @@ public abstract class MediaEncoder implements Runnable {
         final boolean isRunning = true;
         boolean localRequestStop;
         boolean localRequestDrain;
+
         while (isRunning) {
             synchronized (mSync) {
                 localRequestStop = mRequestStop;
@@ -358,7 +360,15 @@ public abstract class MediaEncoder implements Runnable {
     /**
      * previous presentationTimeUs for writing
      */
-    public static long prevOutputPTSUs = 0;
+    public  long prevOutputPTSUs = 0;
+
+    public long getLastPTU(){
+        return prevOutputPTSUs;
+    }
+
+    public void setPTS(long pts){
+        prevOutputPTSUs = pts;
+    }
     /**
      * get next encoding presentationTimeUs
      * @return

@@ -322,6 +322,7 @@ public class CameraGLView extends GLSurfaceView {
             }
             if (mParent == null) return;
             mParent.mCameraHandler = null;
+
         }
 
         private final void setRotation(final Camera.Parameters params) {
