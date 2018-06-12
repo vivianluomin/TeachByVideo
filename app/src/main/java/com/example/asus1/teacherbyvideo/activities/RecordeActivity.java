@@ -1,6 +1,7 @@
 package com.example.asus1.teacherbyvideo.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -29,6 +30,7 @@ import com.example.asus1.teacherbyvideo.Encoder.MediaMuxerWrapper;
 import com.example.asus1.teacherbyvideo.Encoder.MediaVideoEncoder;
 import com.example.asus1.teacherbyvideo.Encoder.VideoComposer;
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.DialogBuilder;
 import com.example.asus1.teacherbyvideo.views.CameraGLViews.CameraGLView;
 
 import java.io.File;
@@ -173,30 +175,90 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
                 break;
 
             case R.id.iv_delete:
+                final AlertDialog dialog_delete = DialogBuilder
+                        .createMessageDialog(
+                                RecordeActivity.this, "",
+                                getString(R.string.record_delet), true,
+                                new DialogBuilder.DialogCallback() {
+                                    @Override
+                                    public void certian() {
+                                        deleteVideoShort();
+                                        mTime.setText("");
+                                        time = 0;
+                                    }
+
+                                    @Override
+                                    public void cancle() {
+                                        //dialog.dismiss();
+
+                                    }
+                                });
+                dialog_delete.show();
                 break;
             case R.id.iv_mask:
                 break;
             case R.id.iv_back:
-
+                    if(!mRecord)
+                     showMesaageDelet();
                 break;
 
         }
 
     }
 
+    private void showMesaageDelet(){
+        if(mVideos.size()<=0){
+            finish();
+        }else {
+            final AlertDialog dialog = DialogBuilder
+                    .createMessageDialog(
+                            RecordeActivity.this, "",
+                            getString(R.string.record_back), true,
+                            new DialogBuilder.DialogCallback() {
+                                @Override
+                                public void certian() {
+                                    deleteVideoShort();
+                                    finish();
+                                }
+
+                                @Override
+                                public void cancle() {
+                                    //dialog.dismiss();
+                                    finish();
+                                }
+                            });
+            dialog.show();
+        }
+
+    }
+
     private void preView(){
+        if(mVideos.size()<=0) return;
+        AlertDialog dialog = DialogBuilder.createSimpleDialog(this,
+                "",getString(R.string.record_composer));
+        dialog.show();
         VideoComposer composer = new VideoComposer
                 (mVideos, mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES
                         , ".mp4").toString());
-
         if(composer.joinVideo() && mOutputPath!=null){
             Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
             intent.putExtra("video",mOutputPath);
             deleteVideoShort();
-            mVideos.clear();
             mVideos.add(mOutputPath);
             startActivity(intent);
         }
+
+        dialog.dismiss();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(!mRecord){
+            showMesaageDelet();
+        }
+
+        //super.onBackPressed();
     }
 
     private void deleteVideoShort(){
@@ -208,6 +270,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
                 Log.d(TAG, "deleteVideoShort: ");
             }
         }
+        mVideos.clear();
     }
 
     private void startRecording(){

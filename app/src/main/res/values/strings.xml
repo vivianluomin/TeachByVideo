@@ -8,4 +8,9 @@
     <string name="preview">预览</string>
     <string name="save_net">保存在服务器</string>
     <string name="save_local">保存在本地</string>
+    <string name="certain">确定</string>
+    <string name="cancle">取消</string>
+    <string name="record_back">确认放弃刚拍的视屏？</string>
+    <string name="record_delet">是否删除刚拍的整段视屏，重新拍摄</string>
+    <string name="record_composer">正在合成视频</string>
 </resources>
