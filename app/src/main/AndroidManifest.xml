@@ -30,7 +30,9 @@
         <activity
             android:name=".activities.RecordeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.PlayVideoActivity"></activity>
+        <activity android:name=".activities.PlayVideoActivity" />
+        <activity android:name=".activities.MyInfoActivity" />
+        <activity android:name=".activities.CourseDetailActivity"></activity>
     </application>
 
 </manifest>

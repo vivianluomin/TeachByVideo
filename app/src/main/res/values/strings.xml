@@ -13,4 +13,15 @@
     <string name="record_back">确认放弃刚拍的视屏？</string>
     <string name="record_delet">是否删除刚拍的整段视屏，重新拍摄</string>
     <string name="record_composer">正在合成视频</string>
+    <string name="my_video">我的视频</string>
+    <string name="my_info">个人信息</string>
+    <string name="user_icon">头像</string>
+    <string name="user_name">昵称</string>
+    <string name="spots_time">运动时间</string>
+    <string name="spots_times">运动次数</string>
+    <string name="spots_mark">评分</string>
+    <string name="change_password">修改密码</string>
+    <string name="bind_phone">绑定手机号</string>
+    <string name="change_user">切换账号</string>
+    <string name="quit">退出</string>
 </resources>

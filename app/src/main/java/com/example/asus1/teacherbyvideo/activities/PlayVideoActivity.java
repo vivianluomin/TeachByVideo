@@ -21,7 +21,6 @@ public class PlayVideoActivity extends BaseActivity implements MediaPlayer.OnCom
     private SurfaceView mPlayView;
     private ImageView mBack;
     private TextView mSaveNet;
-    private TextView mSaveLocal;
 
     private String mFilePath;
 
@@ -44,7 +43,6 @@ public class PlayVideoActivity extends BaseActivity implements MediaPlayer.OnCom
         });
 
         mSaveNet = (TextView)findViewById(R.id.tv_save_net);
-        mSaveLocal = (TextView)findViewById(R.id.tv_save_local);
         setVideo();
     }
 

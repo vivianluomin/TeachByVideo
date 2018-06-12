@@ -38,19 +38,5 @@
         android:layout_marginRight="10dp"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_save_local"
-        android:textSize="12sp"
-        android:textColor="@color/white"
-        android:text="@string/save_local"
-        android:background="@drawable/bg_save_text"
-        android:padding="5dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/tv_save_net"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
-        />
 
 </RelativeLayout>
