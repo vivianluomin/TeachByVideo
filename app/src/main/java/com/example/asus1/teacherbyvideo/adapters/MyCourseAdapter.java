@@ -9,38 +9,24 @@ import android.view.ViewGroup;
 import com.example.asus1.teacherbyvideo.Holders.VideoHolder;
 import com.example.asus1.teacherbyvideo.R;
 
-import java.util.List;
+import java.util.ConcurrentModificationException;
 
-/**
- * Created by asus1 on 2018/5/7.
- */
+public class MyCourseAdapter extends RecyclerView.Adapter<VideoHolder>{
 
-public class TeachFallAdapter extends RecyclerView.Adapter<VideoHolder> {
     private Context mContext;
 
-    private String[] permissions;
-    private List<String> mPer;
-
-    private VedioPremissionCallBack mCallBack;
-
-    public interface VedioPremissionCallBack{
-        void callBack();
-    }
-
-    public TeachFallAdapter(Context context,VedioPremissionCallBack callBack) {
+    public MyCourseAdapter(Context context) {
         mContext = context;
-        mCallBack = callBack;
     }
 
     @Override
     public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.layout_coursefall_item
-                ,parent,false);
+        View view = LayoutInflater.from(mContext)
+                .inflate(R.layout.layout_mycourse_item,parent,false);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               mCallBack.callBack();
             }
         });
         return new VideoHolder(view);
@@ -55,6 +41,4 @@ public class TeachFallAdapter extends RecyclerView.Adapter<VideoHolder> {
     public int getItemCount() {
         return 6;
     }
-
-
 }

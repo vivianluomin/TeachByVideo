@@ -10,7 +10,7 @@ import com.example.asus1.teacherbyvideo.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MyInfoActivity extends AppCompatActivity implements View.OnClickListener{
+public class MyInfoActivity extends BaseActivity implements View.OnClickListener{
 
     private CircleImageView mUserIcon;
     private TextView mSpotsTimes;

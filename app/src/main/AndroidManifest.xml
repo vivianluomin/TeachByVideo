@@ -32,7 +32,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activities.PlayVideoActivity" />
         <activity android:name=".activities.MyInfoActivity" />
-        <activity android:name=".activities.CourseDetailActivity"></activity>
+        <activity android:name=".activities.CourseDetailActivity" />
+        <activity android:name=".activities.MyCourseActivity"></activity>
     </application>
 
 </manifest>

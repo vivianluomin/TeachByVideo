@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,8 +46,7 @@ public class TeachFallFragment extends Fragment implements TeachFallAdapter.Vedi
         View view = inflater.inflate(R.layout.fragment_teachfall,container,false);
         mRecycler = (RecyclerView)view.findViewById(R.id.recycler_view);
         mAdapter = new TeachFallAdapter(getContext(),this);
-        mRecycler.setLayoutManager(new GridLayoutManager(getContext(),2,
-                GridLayoutManager.VERTICAL,false));
+        mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecycler.setAdapter(mAdapter);
         return view;
     }

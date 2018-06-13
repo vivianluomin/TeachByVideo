@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.activities.MyCourseActivity;
 import com.example.asus1.teacherbyvideo.activities.MyInfoActivity;
 
 /**
@@ -48,6 +49,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.tv_course:
+                Intent intent1 = new Intent(getContext(),MyCourseActivity.class);
+                startActivity(intent1);
                 break;
 
             case R.id.tv_video:
