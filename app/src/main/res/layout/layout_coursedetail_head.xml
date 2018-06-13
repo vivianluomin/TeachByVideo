@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:src="@mipmap/bg_video"
+        android:scaleType="centerCrop"
+        android:id="@+id/iv_cover_big"
+        />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="90dp"
+        android:layout_height="130dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="6dp"
+        >
+
+        <ImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/bg_video" />
+
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="16dp"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_videname"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:text="舞动青春"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_video_type"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:text="广播体操"
+            android:layout_marginTop="6dp"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_video_number"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:text="全集 1节"
+            android:layout_marginTop="6dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_join_number"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:text="共有10000人学习此课程"
+            android:layout_marginTop="6dp"
+
+            />
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

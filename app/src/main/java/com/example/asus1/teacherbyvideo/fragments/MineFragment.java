@@ -54,6 +54,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.tv_video:
+
                 break;
 
             case R.id.tv_marks:

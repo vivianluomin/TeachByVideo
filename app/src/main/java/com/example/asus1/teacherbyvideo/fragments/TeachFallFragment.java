@@ -20,8 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.activities.CourseDetailActivity;
 import com.example.asus1.teacherbyvideo.activities.RecordeActivity;
 import com.example.asus1.teacherbyvideo.adapters.TeachFallAdapter;
+import com.example.asus1.teacherbyvideo.adapters.VedioPremissionCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ import java.util.List;
  * Created by asus1 on 2018/5/2.
  */
 
-public class TeachFallFragment extends Fragment implements TeachFallAdapter.VedioPremissionCallBack {
+public class TeachFallFragment extends Fragment implements VedioPremissionCallBack {
 
 
     private RecyclerView mRecycler;
@@ -53,50 +55,10 @@ public class TeachFallFragment extends Fragment implements TeachFallAdapter.Vedi
 
     @Override
     public void callBack() {
-        setPermission();
+
+        //setPermission();
+        Intent intent = new Intent(getContext(), CourseDetailActivity.class);
+        startActivity(intent);
     }
 
-
-    private void setPermission(){
-        permissions = new String[3];
-        mPer = new ArrayList<>();
-        permissions[0] = Manifest.permission.RECORD_AUDIO;
-        permissions[1] = Manifest.permission.CAMERA;
-        permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-
-        for(int i = 0;i<permissions.length;i++){
-            if(ContextCompat.checkSelfPermission
-                    (getContext(),permissions[i])
-                    != PackageManager.PERMISSION_GRANTED){
-                mPer.add(permissions[i]);
-            }
-        }
-        if(mPer.size()>0){
-            this.requestPermissions((String[]) mPer.toArray(new String[mPer.size()]),100);
-        }else {
-            startActivity(new Intent(getContext(), RecordeActivity.class));
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 100){
-            if(grantResults.length>0){
-                for(int i = 0;i<grantResults.length;i++){
-                    Log.d(TAG, "onRequestPermissionsResult: ");
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                        Toast.makeText(getContext(),"你拒绝了该请求",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-                startActivity(new Intent(getContext(), RecordeActivity.class));
-            }
-        }
-
-    }
 }

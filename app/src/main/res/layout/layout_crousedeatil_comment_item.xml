@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="10dp"
+    >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/iv_usericon"
+        android:src="@mipmap/ic_usericon"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="56dp"
+        android:layout_marginTop="6dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_user_name"
+            android:textSize="14sp"
+            android:textColor="@color/textColor"
+            android:text="小薇薇"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_comment"
+            android:textSize="12sp"
+            android:textColor="@color/secondTextColor"
+            android:layout_marginTop="4dp"
+            android:text="老师教的很好啊"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_time"
+            android:textSize="12sp"
+            android:textColor="@color/secondTextColor"
+            android:text="2018-03-01"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@color/divideColor"
+            />
+
+    </LinearLayout>
+
+
+</FrameLayout>

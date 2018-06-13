@@ -24,4 +24,7 @@
     <string name="bind_phone">绑定手机号</string>
     <string name="change_user">切换账号</string>
     <string name="quit">退出</string>
+    <string name="add_course">添加课程</string>
+    <string name="course_introduce">课程介绍：</string>
+    <string name="comment">评论:</string>
 </resources>

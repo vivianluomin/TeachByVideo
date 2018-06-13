@@ -23,9 +23,6 @@ public class TeachFallAdapter extends RecyclerView.Adapter<VideoHolder> {
 
     private VedioPremissionCallBack mCallBack;
 
-    public interface VedioPremissionCallBack{
-        void callBack();
-    }
 
     public TeachFallAdapter(Context context,VedioPremissionCallBack callBack) {
         mContext = context;
