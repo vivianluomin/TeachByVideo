@@ -27,4 +27,8 @@
     <string name="add_course">添加课程</string>
     <string name="course_introduce">课程介绍：</string>
     <string name="comment">评论:</string>
+    <string name="user">电话：</string>
+    <string name="password">密码：</string>
+    <string name="load">登录</string>
+    <string name="register_message">还没有账号？点我注册吧！</string>
 </resources>

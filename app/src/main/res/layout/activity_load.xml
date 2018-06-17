@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.LoadActivity"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            >
+
+            <com.example.asus1.teacherbyvideo.views.MineBG
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/iv_usericon"
+                android:src="@mipmap/ic_icon"
+                android:layout_centerInParent="true"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="16sp"
+                android:text="快乐健康"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:layout_below="@id/iv_usericon"
+                />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:id="@+id/ed_username"
+                android:layout_centerInParent="true"
+                android:background="@drawable/bg_edit"
+                android:gravity="center|left"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/textColor"
+                android:text="@string/user"
+                android:layout_toLeftOf="@id/ed_username"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="6dp"
+                />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            >
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:id="@+id/ed_password"
+                android:inputType="textPassword"
+                android:layout_centerInParent="true"
+                android:background="@drawable/bg_edit"
+                android:gravity="center|left"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/textColor"
+                android:text="@string/password"
+                android:layout_toLeftOf="@id/ed_password"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="6dp"
+                />
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:id="@+id/tv_load"
+            android:text="@string/load"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:background="@drawable/bg_load"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:paddingBottom="20dp"
+        android:id="@+id/tv_register"
+        android:text="@string/register_message"
+        android:textSize="12sp"
+        android:textColor="@color/secondTextColor"
+        android:gravity="bottom|center"
+        />
+
+</FrameLayout>

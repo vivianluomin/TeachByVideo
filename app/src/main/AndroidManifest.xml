@@ -32,9 +32,10 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activities.PlayVideoActivity" />
         <activity android:name=".activities.MyInfoActivity" />
-        <activity android:name=".activities.CourseDetailActivity"
-            />
-        <activity android:name=".activities.MyCourseActivity"></activity>
+        <activity android:name=".activities.CourseDetailActivity" />
+        <activity android:name=".activities.MyCourseActivity" />
+        <activity android:name=".activities.LoadActivity" />
+        <activity android:name=".activities.RegisterActivity"></activity>
     </application>
 
 </manifest>
