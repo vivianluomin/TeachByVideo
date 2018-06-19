@@ -29,6 +29,7 @@
     <string name="comment">评论:</string>
     <string name="user">电话：</string>
     <string name="password">密码：</string>
-    <string name="load">登录</string>
-    <string name="register_message">还没有账号？点我注册吧！</string>
+    <string name="load">注册/登录</string>
+    <string name="register_message">温馨提示：未注册的手机号，登录时将自动注册</string>
+    <string name="phone">手机号</string>
 </resources>

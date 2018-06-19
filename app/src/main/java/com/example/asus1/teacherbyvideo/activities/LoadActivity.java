@@ -20,7 +20,6 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
     private EditText mUser;
     private EditText mPassword;
     private TextView mLoad;
-    private TextView mRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +33,6 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
         mPassword = findViewById(R.id.ed_password);
         mLoad = findViewById(R.id.tv_load);
         mLoad.setOnClickListener(this);
-        mRegister = findViewById(R.id.tv_register);
-        mRegister.setOnClickListener(this);
 
     }
 
@@ -49,8 +46,6 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
                 Call<ComModel<LoadModel>> call = service.getLoadInfo(name,password);
                 //HttpUtil.doRequest(call,callBack);
                 startActivity(new Intent(LoadActivity.this,MainActivity.class));
-                break;
-            case R.id.tv_register:
                 break;
         }
     }
