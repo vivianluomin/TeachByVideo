@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="150dp"
+    android:layout_marginBottom="10dp"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/iv_video_cover"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/bg_video"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_time"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="06/19 20:32"
+        android:layout_marginTop="10dp"
+        />
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|right"
+        android:id="@+id/iv_delete"
+        android:src="@mipmap/ic_delete"
+        android:scaleType="center"
+        />
+
+
+</FrameLayout>

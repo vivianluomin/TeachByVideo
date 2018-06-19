@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.asus1.teacherbyvideo.R;
 import com.example.asus1.teacherbyvideo.activities.MyCourseActivity;
 import com.example.asus1.teacherbyvideo.activities.MyInfoActivity;
+import com.example.asus1.teacherbyvideo.activities.MyVideoActivity;
 
 /**
  * Created by asus1 on 2018/5/2.
@@ -54,7 +55,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.tv_video:
-
+                Intent intent2 = new Intent(getContext(),MyVideoActivity.class);
+                startActivity(intent2);
                 break;
 
             case R.id.tv_marks:
