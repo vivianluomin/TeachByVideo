@@ -65,6 +65,45 @@
             android:layout_gravity="right"
             />
     </FrameLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/divide_secondColor"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="5dp"
+        android:id="@+id/frag_user_name"
+        android:background="@drawable/click_state"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="14sp"
+            android:textColor="@color/textColor"
+            android:text="@string/user_name"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="14sp"
+            android:id="@+id/tv_user_name"
+            android:textColor="@color/textColor"
+            android:text="小薇薇"
+            android:layout_gravity="right"
+            android:gravity="center"
+            />
+
+    </FrameLayout>
 
     <View
         android:layout_width="match_parent"
@@ -206,35 +245,12 @@
         android:background="@color/divide_secondColor"
         />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:id="@+id/tv_bindphone"
-        android:text="@string/bind_phone"
-        android:textSize="14sp"
-        android:textColor="@color/textColor"
-        android:gravity="center|left"
-        android:paddingLeft="16dp"
-        android:background="@drawable/click_state"
-        />
-
     <View
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:background="@color/divide_secondColor"
         />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:id="@+id/tv_change_user"
-        android:text="@string/change_user"
-        android:textSize="14sp"
-        android:textColor="@color/textColor"
-        android:gravity="center|left"
-        android:paddingLeft="16dp"
-        android:background="@drawable/click_state"
-        />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

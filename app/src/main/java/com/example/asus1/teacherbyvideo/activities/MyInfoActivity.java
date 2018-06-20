@@ -3,6 +3,7 @@ package com.example.asus1.teacherbyvideo.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,9 +18,10 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
     private TextView mSpotsTime;
     private TextView mMarks;
     private TextView mChangePassword;
-    private TextView mBindPhone;
-    private TextView mChangeUser;
+    private TextView mUserName;
     private TextView mQuit;
+    private FrameLayout mFrageUserName;
+    private ImageView mBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +41,21 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         mChangePassword = findViewById(R.id.tv_changepassword);
         mChangePassword.setOnClickListener(this);
 
-        mBindPhone = findViewById(R.id.tv_bindphone);
-        mBindPhone.setOnClickListener(this);
-
-        mChangeUser = findViewById(R.id.tv_change_user);
-        mChangeUser.setOnClickListener(this);
+        mUserName = findViewById(R.id.tv_user_name);
+        //mUserName.setOnClickListener(this);
+        mFrageUserName = findViewById(R.id.frag_user_name);
+        mFrageUserName.setOnClickListener(this);
 
         mQuit = findViewById(R.id.tv_quit);
         mQuit.setOnClickListener(this);
+
+        mBack = findViewById(R.id.iv_back);
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 
     }
@@ -58,11 +67,10 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.tv_changepassword:
                 break;
-            case R.id.tv_bindphone:
-                break;
-            case R.id.tv_change_user:
+            case R.id.frag_user_name:
                 break;
             case R.id.tv_quit:
+
                 break;
         }
     }

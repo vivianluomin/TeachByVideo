@@ -32,4 +32,6 @@
     <string name="load">注册/登录</string>
     <string name="register_message">温馨提示：未注册的手机号，登录时将自动注册</string>
     <string name="phone">手机号</string>
+    <string name="myvideo_delete">是否删除该视频？</string>
+    <string name="changename">修改昵称</string>
 </resources>

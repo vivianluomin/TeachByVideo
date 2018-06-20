@@ -224,6 +224,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
                                 @Override
                                 public void cancle() {
                                     //dialog.dismiss();
+                                    ComposeVideo();
                                     finish();
                                 }
                             });
@@ -240,7 +241,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         VideoComposer composer = new VideoComposer
                 (mVideos, mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES
                         , ".mp4").toString());
-        if(composer.joinVideo() && mOutputPath!=null){
+        if(ComposeVideo() && mOutputPath!=null){
             Intent intent = new Intent(RecordeActivity.this,PlayVideoActivity.class);
             intent.putExtra("video",mOutputPath);
             deleteVideoShort();
@@ -251,6 +252,14 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
         dialog.dismiss();
     }
 
+    private boolean ComposeVideo(){
+        if(mVideos.size()<=0) return false;
+        VideoComposer composer = new VideoComposer
+                (mVideos, mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES
+                        , ".mp4").toString());
+
+        return composer.joinVideo();
+    }
 
     @Override
     public void onBackPressed() {
@@ -262,6 +271,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     }
 
     private void deleteVideoShort(){
+
         for(int i =0;i<mVideos.size();i++){
             String path = mVideos.get(i);
             File file = new File(path);
