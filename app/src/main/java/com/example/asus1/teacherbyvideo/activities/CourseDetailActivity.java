@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.adapters.CourseDetailAdapter;
 import com.example.asus1.teacherbyvideo.adapters.VedioPremissionCallBack;
 
@@ -40,6 +41,7 @@ public class CourseDetailActivity extends AppCompatActivity implements VedioPrem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_detail);
+        ActivityManager.getInstance().addActivity(this);
         Window window = getWindow();
         View decor = window.getDecorView();
         if(Build.VERSION.SDK_INT>=21){

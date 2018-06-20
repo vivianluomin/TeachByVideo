@@ -30,6 +30,7 @@ import com.example.asus1.teacherbyvideo.Encoder.MediaMuxerWrapper;
 import com.example.asus1.teacherbyvideo.Encoder.MediaVideoEncoder;
 import com.example.asus1.teacherbyvideo.Encoder.VideoComposer;
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.Util.DialogBuilder;
 import com.example.asus1.teacherbyvideo.views.CameraGLViews.CameraGLView;
 
@@ -91,6 +92,7 @@ public class RecordeActivity extends  BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorde);
+        ActivityManager.getInstance().addActivity(this);
         getWindow().setFormat(PixelFormat.TRANSPARENT);
         init();
 

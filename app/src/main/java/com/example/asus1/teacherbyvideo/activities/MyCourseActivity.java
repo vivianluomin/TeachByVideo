@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.adapters.MyCourseAdapter;
 
 public class MyCourseActivity extends BaseActivity {
@@ -17,6 +18,7 @@ public class MyCourseActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_course);
+        ActivityManager.getInstance().addActivity(this);
         init();
     }
 

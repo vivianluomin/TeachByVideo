@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.activities.BaseActivity;
 import com.example.asus1.teacherbyvideo.fragments.MineFragment;
 import com.example.asus1.teacherbyvideo.fragments.TeachFallFragment;
@@ -34,6 +35,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActivityManager.getInstance().addActivity(this);
         init();
     }
 

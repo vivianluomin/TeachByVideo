@@ -1,5 +1,6 @@
 package com.example.asus1.teacherbyvideo.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -27,6 +29,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_info);
+        ActivityManager.getInstance().addActivity(this);
         init();
     }
 
@@ -70,7 +73,9 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
             case R.id.frag_user_name:
                 break;
             case R.id.tv_quit:
-
+                startActivity(new Intent(MyInfoActivity.this,
+                        LoadActivity.class));
+                    ActivityManager.getInstance().exit();
                 break;
         }
     }

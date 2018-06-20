@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 
 public class PlayVideoActivity extends BaseActivity implements MediaPlayer.OnCompletionListener,
 
@@ -28,6 +29,7 @@ public class PlayVideoActivity extends BaseActivity implements MediaPlayer.OnCom
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_video);
+        ActivityManager.getInstance().addActivity(this);
         mFilePath = getIntent().getStringExtra("video");
         init();
     }

@@ -16,6 +16,7 @@ import com.example.asus1.teacherbyvideo.Models.ComModel;
 import com.example.asus1.teacherbyvideo.Models.LoadModel;
 import com.example.asus1.teacherbyvideo.R;
 import com.example.asus1.teacherbyvideo.Services.LoadService;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.Util.HttpUtil;
 
 import java.util.ArrayList;

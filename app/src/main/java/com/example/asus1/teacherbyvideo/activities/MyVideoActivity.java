@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.asus1.teacherbyvideo.R;
+import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.Util.Constant;
 import com.example.asus1.teacherbyvideo.adapters.MyCourseAdapter;
 import com.example.asus1.teacherbyvideo.adapters.MyVideoAdapter;
@@ -32,6 +33,7 @@ public class MyVideoActivity extends BaseActivity implements VideoCallBack {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_video);
+        ActivityManager.getInstance().addActivity(this);
         init();
     }
 
