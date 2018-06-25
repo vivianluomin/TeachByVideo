@@ -8,6 +8,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface LoadService {
 
@@ -15,5 +16,14 @@ public interface LoadService {
     @FormUrlEncoded
     Call<ComModel<LoadModel>> getLoadInfo(@Field("phone") String phone,
                                           @Field("password") String password);
+
+    @GET("/usr/check/{phone}")
+    Call<ComModel<String>> checkPhone(@Path("phone") String phone);
+
+    @POST("/usr/register/")
+    @FormUrlEncoded
+    Call<ComModel<String>> registerPhone(@Field("phone") String phone,
+                                         @Field("password") String password);
+
 
 }

@@ -121,4 +121,15 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
     };
 
 
+    private HttpUtil.ResquestCallBack<String> checkPhone = new HttpUtil.ResquestCallBack<String>() {
+        @Override
+        public void onRespone(String response) {
+
+        }
+
+        @Override
+        public void onError() {
+
+        }
+    };
 }

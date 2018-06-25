@@ -37,8 +37,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
        mMyCourse.setOnClickListener(this);
        mMyVideo = (TextView)(view.findViewById(R.id.tv_video));
        mMyVideo.setOnClickListener(this);
-       mMyMarks = (TextView)(view.findViewById(R.id.tv_marks));
-       mMyMarks.setOnClickListener(this);
         return view;
     }
 
@@ -59,8 +57,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent2);
                 break;
 
-            case R.id.tv_marks:
-                break;
         }
     }
 }

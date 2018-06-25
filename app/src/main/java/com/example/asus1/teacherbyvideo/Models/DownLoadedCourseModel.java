@@ -2,7 +2,7 @@ package com.example.asus1.teacherbyvideo.Models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DownLoadCourseModel {
+public class DownLoadedCourseModel {
 
     @SerializedName("id")
     private int mId;
