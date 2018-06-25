@@ -34,4 +34,9 @@
     <string name="phone">手机号</string>
     <string name="myvideo_delete">是否删除该视频？</string>
     <string name="changename">修改昵称</string>
+    <string name="phone_can_use">手机号可用</string>
+    <string name="phone_cannot_use">手机号已存在</string>
+    <string name="register_fail">注册失败</string>
+    <string name="load_pass_fail">用户或密码错误</string>
+    <string name="loaded">用户已登录</string>
 </resources>

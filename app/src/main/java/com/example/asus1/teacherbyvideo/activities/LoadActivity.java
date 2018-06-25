@@ -51,14 +51,10 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_load:
-                String name = mUser.getText().toString();
-                String password = mLoad.getText().toString();
-                LoadService service = HttpUtil.getService(LoadService.class);
-                Call<ComModel<LoadModel>> call = service.getLoadInfo(name,password);
-                //HttpUtil.doRequest(call,callBack);
-                //startActivity(new Intent(LoadActivity.this,MainActivity.class));
+//                String name = mUser.getText().toString();
+//                String password = mLoad.getText().toString();
+//                checkPhoneF(name,password);
                 setPermission();
-                finish();
                 break;
         }
     }
@@ -96,7 +92,6 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
                 for(int i = 0;i<grantResults.length;i++){
                     if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
                         Toast.makeText(this,"你拒绝了该请求",Toast.LENGTH_SHORT).show();
-                        return;
                     }
                 }
                 startActivity(new Intent(LoadActivity.this,MainActivity.class));
@@ -105,13 +100,42 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
+    private void register(String name,String password){
+        LoadService service = HttpUtil.getService(LoadService.class);
+        Call<ComModel<String>> call = service.registerPhone(name,password);
+        HttpUtil.doRequest(call,registerCallback);
+    }
+
+    private void load(String name,String password){
+        LoadService service = HttpUtil.getService(LoadService.class);
+        Call<ComModel<LoadModel>> call = service.
+                getLoadInfo(mUser.getText().toString(),mPassword.getText().toString());
+        HttpUtil.doRequest(call,callBack);
+
+    }
+
+    private void checkPhoneF(String name,String password){
+        LoadService service = HttpUtil.getService(LoadService.class);
+        Call<ComModel<String>> call = service.checkPhone(name);
+        HttpUtil.doRequest(call,checkPhone);
+    }
+
     private HttpUtil.ResquestCallBack<LoadModel> callBack = new HttpUtil.ResquestCallBack<LoadModel>() {
         @Override
-        public void onRespone(LoadModel response) {
+        public void onRespone(ComModel<LoadModel> response) {
             if(response!=null){
-                setPermission();
-
+                if(response.getmStatus() == 200){
+                    setPermission();
+                    //startActivity(new Intent(LoadActivity.this,MainActivity.class));
+                }else if(response.getmStatus() == 501){
+                    Toast.makeText(LoadActivity.this
+                            ,getString(R.string.load_pass_fail),Toast.LENGTH_SHORT).show();
+                }else if(response.getmStatus() == 502){
+                    Toast.makeText(LoadActivity.this
+                            ,getString(R.string.loaded),Toast.LENGTH_SHORT).show();
+                }
             }
+
         }
 
         @Override
@@ -123,8 +147,29 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
 
     private HttpUtil.ResquestCallBack<String> checkPhone = new HttpUtil.ResquestCallBack<String>() {
         @Override
-        public void onRespone(String response) {
+        public void onRespone(ComModel<String> response) {
+            if(response.getmStatus() == 200){
+                register(mUser.getText().toString(),mPassword.getText().toString());
+            }else {
+              load(mUser.getText().toString(),mPassword.getText().toString());
+            }
+        }
 
+        @Override
+        public void onError() {
+
+        }
+    };
+
+    HttpUtil.ResquestCallBack<String> registerCallback = new HttpUtil.ResquestCallBack<String>() {
+        @Override
+        public void onRespone(ComModel<String> response) {
+            if (response.getmStatus() == 200){
+                register(mUser.getText().toString(),mPassword.getText().toString());
+            }else {
+                Toast.makeText(LoadActivity.this
+                        ,getString(R.string.register_fail),Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override

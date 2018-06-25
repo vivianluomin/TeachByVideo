@@ -28,7 +28,8 @@ public class HttpUtil {
             @Override
             public void onResponse(Call<ComModel<T>> call, Response<ComModel<T>> response) {
                 if(response!=null&&response.isSuccessful()){
-                    callBack.onRespone(response.body().getmData());
+                    ComModel<T> model = response.body();
+                    callBack.onRespone(model);
                 }
             }
 
@@ -49,7 +50,7 @@ public class HttpUtil {
 
 
     public  interface ResquestCallBack<T>{
-        void onRespone(T response);
+        void onRespone(ComModel<T> response);
         void onError();
 
     }
