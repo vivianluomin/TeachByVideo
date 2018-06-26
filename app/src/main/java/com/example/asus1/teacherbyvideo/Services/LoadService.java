@@ -1,7 +1,7 @@
 package com.example.asus1.teacherbyvideo.Services;
 
 import com.example.asus1.teacherbyvideo.Models.ComModel;
-import com.example.asus1.teacherbyvideo.Models.LoadModel;
+import com.example.asus1.teacherbyvideo.Models.UserModel;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -14,7 +14,7 @@ public interface LoadService {
 
     @POST("/usr/login")
     @FormUrlEncoded
-    Call<ComModel<LoadModel>> getLoadInfo(@Field("phone") String phone,
+    Call<ComModel<UserModel>> getLoadInfo(@Field("phone") String phone,
                                           @Field("password") String password);
 
     @GET("/usr/check/{phone}")

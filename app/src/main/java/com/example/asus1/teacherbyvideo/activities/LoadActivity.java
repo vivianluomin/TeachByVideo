@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,11 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.asus1.teacherbyvideo.Models.ComModel;
-import com.example.asus1.teacherbyvideo.Models.LoadModel;
+import com.example.asus1.teacherbyvideo.Models.UserModel;
 import com.example.asus1.teacherbyvideo.R;
 import com.example.asus1.teacherbyvideo.Services.LoadService;
-import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.Util.HttpUtil;
+import com.example.asus1.teacherbyvideo.Util.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +107,7 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
 
     private void load(String name,String password){
         LoadService service = HttpUtil.getService(LoadService.class);
-        Call<ComModel<LoadModel>> call = service.
+        Call<ComModel<UserModel>> call = service.
                 getLoadInfo(mUser.getText().toString(),mPassword.getText().toString());
         HttpUtil.doRequest(call,callBack);
 
@@ -120,11 +119,12 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener {
         HttpUtil.doRequest(call,checkPhone);
     }
 
-    private HttpUtil.ResquestCallBack<LoadModel> callBack = new HttpUtil.ResquestCallBack<LoadModel>() {
+    private HttpUtil.ResquestCallBack<UserModel> callBack = new HttpUtil.ResquestCallBack<UserModel>() {
         @Override
-        public void onRespone(ComModel<LoadModel> response) {
+        public void onRespone(ComModel<UserModel> response) {
             if(response!=null){
                 if(response.getmStatus() == 200){
+                    UserManager.CURRENT_USER = response.getmData();
                     setPermission();
                     //startActivity(new Intent(LoadActivity.this,MainActivity.class));
                 }else if(response.getmStatus() == 501){

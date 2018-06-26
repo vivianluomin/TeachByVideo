@@ -20,6 +20,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.asus1.teacherbyvideo.Models.CourseBarModel;
+import com.example.asus1.teacherbyvideo.Models.CourseModel;
 import com.example.asus1.teacherbyvideo.R;
 import com.example.asus1.teacherbyvideo.Util.ActivityManager;
 import com.example.asus1.teacherbyvideo.adapters.CourseDetailAdapter;
@@ -28,7 +30,7 @@ import com.example.asus1.teacherbyvideo.adapters.VedioPremissionCallBack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseDetailActivity extends AppCompatActivity implements VedioPremissionCallBack{
+public class CourseDetailActivity extends AppCompatActivity implements VedioPremissionCallBack<CourseBarModel>{
 
     private RecyclerView mRecyclerView;
     private CourseDetailAdapter mAdapter;
@@ -36,6 +38,9 @@ public class CourseDetailActivity extends AppCompatActivity implements VedioPrem
     private List<String> mComments = new ArrayList<>();
     private String[] permissions;
     private List<String> mPer;
+    private String mIntroduction;
+
+    private CourseModel mCourseModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class CourseDetailActivity extends AppCompatActivity implements VedioPrem
 
         }
 
+        mCourseModel = (CourseModel) getIntent().getSerializableExtra("course");
         init();
     }
 
@@ -82,7 +88,7 @@ public class CourseDetailActivity extends AppCompatActivity implements VedioPrem
     }
 
     @Override
-    public void callBack() {
+    public void callBack(CourseBarModel model) {
 
         setPermission();
     }

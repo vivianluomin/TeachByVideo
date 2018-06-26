@@ -2,6 +2,11 @@ package com.example.asus1.teacherbyvideo.Util;
 
 import com.example.asus1.teacherbyvideo.Models.ComModel;
 
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -14,9 +19,25 @@ public class HttpUtil {
     public static  Retrofit MAINClient;
 
 
+    private static OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+
     public static Retrofit getRetrofit(){
+       builder.addInterceptor(new Interceptor() {
+           @Override
+           public okhttp3.Response intercept(Chain chain) throws IOException {
+               Request request = chain.request().newBuilder()
+                       .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                       .addHeader("Accept-Encoding", "gzip, deflate")
+                       .addHeader("Connection", "keep-alive")
+                       .addHeader("Accept", "*/*")
+                        .build();
+               return chain.proceed(request);
+           }
+       });
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MAIN_URL)
+                .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

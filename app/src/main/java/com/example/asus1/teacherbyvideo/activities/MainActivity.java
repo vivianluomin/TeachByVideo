@@ -13,6 +13,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.example.asus1.teacherbyvideo.R;
 import com.example.asus1.teacherbyvideo.Util.ActivityManager;
+import com.example.asus1.teacherbyvideo.Util.HttpUtil;
 import com.example.asus1.teacherbyvideo.activities.BaseActivity;
 import com.example.asus1.teacherbyvideo.fragments.MineFragment;
 import com.example.asus1.teacherbyvideo.fragments.TeachFallFragment;
